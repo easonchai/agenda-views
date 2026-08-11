@@ -1,4 +1,10 @@
-import raw from "@/data/agenda.json";
+/**
+ * Pure agenda model — no data import, no React, no DOM.
+ *
+ * Everything here takes the agenda (or its derived index) as an argument
+ * rather than reading a module-level singleton, so two agendas can coexist on
+ * one page and this file can be lifted into a headless package unchanged.
+ */
 
 /* ------------------------------------------------------------------ types */
 
@@ -45,27 +51,41 @@ export type Session = {
 };
 
 export type Agenda = {
+  /** IANA zone, for display only — "HH:MM" values are wall-clock in it */
+  timezone: string;
+  /** fixed offset of that zone from UTC, in minutes */
+  utcOffsetMinutes: number;
   days: Day[];
   stages: Stage[];
   sessions: Session[];
 };
 
-export const agenda = raw as Agenda;
-export const { days, stages, sessions } = agenda;
+/** An agenda plus the lookups every consumer would otherwise rebuild. */
+export type AgendaIndex = {
+  agenda: Agenda;
+  days: Day[];
+  stages: Stage[];
+  sessions: Session[];
+  stageById: Map<string, Stage>;
+  dayById: Map<string, Day>;
+  stageOrder: Map<string, number>;
+  formats: string[];
+};
 
-/** Shared anchor id so one "Jump to now" control works in either view. */
-export const NOW_ANCHOR_ID = "agenda-now";
-
-/** Event timezone. All "HH:MM" values in the data are wall-clock in this zone. */
-export const EVENT_TIMEZONE = "Asia/Kuala_Lumpur";
-export const EVENT_UTC_OFFSET_MINUTES = 8 * 60;
-
-export const stageById = new Map(stages.map((s) => [s.id, s]));
-export const dayById = new Map(days.map((d) => [d.id, d]));
-
-export const formats = [
-  ...new Set(sessions.map((s) => s.format).filter(Boolean) as string[]),
-].sort();
+export function createAgendaIndex(agenda: Agenda): AgendaIndex {
+  return {
+    agenda,
+    days: agenda.days,
+    stages: agenda.stages,
+    sessions: agenda.sessions,
+    stageById: new Map(agenda.stages.map((s) => [s.id, s])),
+    dayById: new Map(agenda.days.map((d) => [d.id, d])),
+    stageOrder: new Map(agenda.stages.map((s, i) => [s.id, i])),
+    formats: [
+      ...new Set(agenda.sessions.map((s) => s.format).filter(Boolean) as string[]),
+    ].sort(),
+  };
+}
 
 /* ------------------------------------------------------------------- time */
 
@@ -109,24 +129,26 @@ export function formatDuration(min: number): string {
  * "Now" expressed as (dayId, minutes-since-midnight) in *event* time, derived
  * from the visitor's real clock. Returns null when today is not an event day.
  */
-export function eventNow(now = new Date()): { dayId: string; minutes: number } | null {
+export type EventNow = { dayId: string; minutes: number };
+
+export function eventNow(index: AgendaIndex, now = new Date()): EventNow | null {
   const utcMs = now.getTime() + now.getTimezoneOffset() * 60_000;
-  const eventDate = new Date(utcMs + EVENT_UTC_OFFSET_MINUTES * 60_000);
+  const eventDate = new Date(utcMs + index.agenda.utcOffsetMinutes * 60_000);
   const iso = `${eventDate.getFullYear()}-${String(eventDate.getMonth() + 1).padStart(2, "0")}-${String(
     eventDate.getDate(),
   ).padStart(2, "0")}`;
-  const day = days.find((d) => d.date === iso);
+  const day = index.days.find((d) => d.date === iso);
   if (!day) return null;
   return { dayId: day.id, minutes: eventDate.getHours() * 60 + eventDate.getMinutes() };
 }
 
 /** The day to open on: today if the event is running, else the first day. */
-export function defaultDayId(now = new Date()): string {
-  const live = eventNow(now);
+export function defaultDayId(index: AgendaIndex, now = new Date()): string {
+  const live = eventNow(index, now);
   if (live) return live.dayId;
   const today = now.toISOString().slice(0, 10);
-  const upcoming = days.find((d) => d.date >= today);
-  return (upcoming ?? days[0]).id;
+  const upcoming = index.days.find((d) => d.date >= today);
+  return (upcoming ?? index.days[0]).id;
 }
 
 /* ---------------------------------------------------------------- queries */
@@ -138,7 +160,11 @@ export type Filters = {
   query: string;
 };
 
-function matchesQuery(session: Session, q: string): boolean {
+function matchesQuery(
+  session: Session,
+  q: string,
+  stageById: Map<string, Stage>,
+): boolean {
   if (!q) return true;
   const needle = q.toLowerCase();
   return (
@@ -156,19 +182,23 @@ function matchesQuery(session: Session, q: string): boolean {
   );
 }
 
-export function filterSessions(all: Session[], f: Filters): Session[] {
+export function filterSessions(
+  index: AgendaIndex,
+  all: Session[],
+  f: Filters,
+): Session[] {
   return all.filter((s) => {
     if (s.day !== f.dayId) return false;
     // all-stage rows (lunch, plenary) survive stage filtering — they belong to every track
     if (f.stageIds.length && !s.allStages && !f.stageIds.includes(s.stageId ?? "")) return false;
     if (f.formats.length && !f.formats.includes(s.format ?? "")) return false;
-    return matchesQuery(s, f.query);
+    return matchesQuery(s, f.query, index.stageById);
   });
 }
 
 /** Chronological, then by stage order, so the mobile list is stable. */
-export function sortChronologically(list: Session[]): Session[] {
-  const stageOrder = new Map(stages.map((s, i) => [s.id, i]));
+export function sortChronologically(index: AgendaIndex, list: Session[]): Session[] {
+  const { stageOrder } = index;
   return [...list].sort((a, b) => {
     const byStart = toMinutes(a.start) - toMinutes(b.start);
     if (byStart) return byStart;
@@ -183,9 +213,9 @@ export function sortChronologically(list: Session[]): Session[] {
 /** Group a sorted list into buckets that share a start time (mobile rails). */
 export type TimeGroup = { start: string; sessions: Session[] };
 
-export function groupByStart(list: Session[]): TimeGroup[] {
+export function groupByStart(index: AgendaIndex, list: Session[]): TimeGroup[] {
   const groups: TimeGroup[] = [];
-  for (const s of sortChronologically(list)) {
+  for (const s of sortChronologically(index, list)) {
     const last = groups[groups.length - 1];
     if (last && last.start === s.start) last.sessions.push(s);
     else groups.push({ start: s.start, sessions: [s] });
@@ -347,14 +377,17 @@ export function speakerSummary(session: Session, max = 2): string {
   return `${names.slice(0, max).join(", ")} +${names.length - max}`;
 }
 
+export type SessionStatus = "past" | "live" | "upcoming" | "unknown";
+
 export function sessionStatus(
+  index: AgendaIndex,
   session: Session,
-  now: { dayId: string; minutes: number } | null,
-): "past" | "live" | "upcoming" | "unknown" {
+  now: EventNow | null,
+): SessionStatus {
   if (!now) return "unknown";
   if (session.day !== now.dayId) {
-    const day = dayById.get(session.day);
-    const nowDay = dayById.get(now.dayId);
+    const day = index.dayById.get(session.day);
+    const nowDay = index.dayById.get(now.dayId);
     if (!day || !nowDay) return "unknown";
     return day.date < nowDay.date ? "past" : "upcoming";
   }

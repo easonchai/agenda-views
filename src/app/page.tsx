@@ -1,10 +1,16 @@
 import { Suspense } from "react";
 import { AgendaShell } from "@/components/agenda-shell";
+import type { Agenda } from "@/lib/agenda";
+import agendaData from "@/data/agenda.json";
+
+// the only place the app is bound to this particular event's data
+const agenda = agendaData as Agenda;
 
 export default function Home() {
   return (
     <Suspense fallback={<AgendaSkeleton />}>
-      <AgendaShell />
+      {/* the skip link in layout.tsx targets this */}
+      <AgendaShell agenda={agenda} mainId="agenda" />
     </Suspense>
   );
 }

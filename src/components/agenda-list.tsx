@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { Session } from "@/lib/agenda";
+import type { EventNow, Session, SessionStatus } from "@/lib/agenda";
+import { useAgenda } from "@/lib/agenda-context";
 import {
-  NOW_ANCHOR_ID,
   durationMinutes,
   formatDuration,
   formatTime,
   groupByStart,
   sessionStatus,
-  stageById,
 } from "@/lib/agenda";
 import {
   FormatBadge,
@@ -32,21 +31,31 @@ import {
 
 type Props = {
   sessions: Session[];
-  now: { dayId: string; minutes: number } | null;
+  now: EventNow | null;
   dayId: string;
   onSelect: (session: Session) => void;
   hour12: boolean;
+  /** DOM id placed on the live time rail, for an external "jump to now" */
+  nowAnchorId?: string;
 };
 
-export function AgendaList({ sessions, now, dayId, onSelect, hour12 }: Props) {
-  const groups = groupByStart(sessions);
+export function AgendaList({
+  sessions,
+  now,
+  dayId,
+  onSelect,
+  hour12,
+  nowAnchorId,
+}: Props) {
+  const index = useAgenda();
+  const groups = groupByStart(index, sessions);
   const liveRef = useRef<HTMLDivElement>(null);
   const scrolledFor = useRef<string | null>(null);
 
   const nowMinutes = now && now.dayId === dayId ? now.minutes : null;
   // only the first live block gets the scroll anchor
   const liveIndex = groups.findIndex((g) =>
-    g.sessions.some((s) => sessionStatus(s, now) === "live"),
+    g.sessions.some((s) => sessionStatus(index, s, now) === "live"),
   );
 
   // Jump to the current time block once, on the running day. `liveIndex` is in
@@ -65,15 +74,15 @@ export function AgendaList({ sessions, now, dayId, onSelect, hour12 }: Props) {
 
   return (
     <ol className="space-y-0">
-      {groups.map((group, index) => {
-        const anyLive = index === liveIndex;
+      {groups.map((group, groupIndex) => {
+        const anyLive = groupIndex === liveIndex;
 
         return (
           <li key={group.start} className="relative">
             {/* sticky time rail — stays pinned while its block scrolls past */}
             <div
               ref={anyLive ? liveRef : undefined}
-              id={anyLive ? NOW_ANCHOR_ID : undefined}
+              id={anyLive ? nowAnchorId : undefined}
               className="sticky top-[var(--agenda-sticky-top,0px)] z-10 -mx-4 flex items-center gap-3 scroll-mt-[calc(var(--agenda-sticky-top,0px)+1rem)] bg-surface/92 px-4 py-2 backdrop-blur-md"
             >
               <span className="font-mono text-sm font-semibold tabular-nums text-text">
@@ -93,7 +102,7 @@ export function AgendaList({ sessions, now, dayId, onSelect, hour12 }: Props) {
                 <li key={session.id}>
                   <AgendaRow
                     session={session}
-                    status={sessionStatus(session, now)}
+                    status={sessionStatus(index, session, now)}
                     onSelect={onSelect}
                     hour12={hour12}
                   />
@@ -114,10 +123,11 @@ function AgendaRow({
   hour12,
 }: {
   session: Session;
-  status: ReturnType<typeof sessionStatus>;
+  status: SessionStatus;
   onSelect: (session: Session) => void;
   hour12: boolean;
 }) {
+  const { stageById } = useAgenda();
   const stage = session.stageId ? stageById.get(session.stageId) : null;
   const minutes = durationMinutes(session);
 
@@ -145,7 +155,7 @@ function AgendaRow({
         "block w-full rounded-xl border border-line border-l-3 border-l-[var(--accent)]",
         "bg-surface-raised p-3 text-left transition active:scale-[0.99]",
         status === "past" && "opacity-60",
-        sessionAccent(session),
+        sessionAccent(stageById, session),
       )}
     >
       {/*

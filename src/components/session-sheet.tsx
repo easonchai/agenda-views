@@ -1,15 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Session } from "@/lib/agenda";
+import type { EventNow, Session } from "@/lib/agenda";
+import { useAgenda } from "@/lib/agenda-context";
 import {
-  EVENT_TIMEZONE,
-  dayById,
   durationMinutes,
   formatDuration,
   formatRange,
   sessionStatus,
-  stageById,
 } from "@/lib/agenda";
 import { useScrollLock } from "@/lib/hooks";
 import {
@@ -27,9 +25,18 @@ import {
 const FOCUSABLE =
   'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
+/** 480 -> "GMT+8", -330 -> "GMT-5:30" */
+function formatUtcOffset(minutes: number): string {
+  const sign = minutes < 0 ? "-" : "+";
+  const abs = Math.abs(minutes);
+  const h = Math.floor(abs / 60);
+  const m = abs % 60;
+  return `GMT${sign}${h}${m ? `:${String(m).padStart(2, "0")}` : ""}`;
+}
+
 type Props = {
   session: Session | null;
-  now: { dayId: string; minutes: number } | null;
+  now: EventNow | null;
   onClose: () => void;
   hour12: boolean;
 };
@@ -40,6 +47,7 @@ type Props = {
  * background scroll is locked, and focus returns to the trigger on close.
  */
 export function SessionSheet({ session, now, onClose, hour12 }: Props) {
+  const index = useAgenda();
   const open = session !== null;
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
@@ -81,9 +89,9 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
 
   if (!session) return null;
 
-  const stage = session.stageId ? stageById.get(session.stageId) : null;
-  const day = dayById.get(session.day);
-  const status = sessionStatus(session, now);
+  const stage = session.stageId ? index.stageById.get(session.stageId) : null;
+  const day = index.dayById.get(session.day);
+  const status = sessionStatus(index, session, now);
 
   return (
     <div
@@ -107,7 +115,7 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
           "animate-sheet-in relative flex max-h-[88dvh] w-full flex-col overflow-hidden",
           "rounded-t-2xl border border-line bg-surface-raised shadow-2xl",
           "sm:max-w-lg sm:rounded-2xl",
-          sessionAccent(session),
+          sessionAccent(index.stageById, session),
         )}
       >
         {/* drag affordance — visual only; the sheet closes via backdrop/Esc/button */}
@@ -157,7 +165,7 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
                   · {formatDuration(durationMinutes(session))}
                 </span>
                 <span className="block text-xs text-text-subtle">
-                  {EVENT_TIMEZONE.replace("_", " ")} (GMT+8)
+                  {index.agenda.timezone.replace(/_/g, " ")} ({formatUtcOffset(index.agenda.utcOffsetMinutes)})
                 </span>
               </dd>
             </div>

@@ -104,7 +104,13 @@ def to_min(t):
 
 sessions.sort(key=lambda x: (x["day"], to_min(x["start"]), to_min(x["end"])))
 
-out = {"days": DAY_META, "stages": STAGES, "sessions": sessions}
+out = {
+    "timezone": "Asia/Kuala_Lumpur",
+    "utcOffsetMinutes": 8 * 60,
+    "days": DAY_META,
+    "stages": STAGES,
+    "sessions": sessions,
+}
 OUT.write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
 print(f"{len(sessions)} sessions -> {OUT}")
 fmts = sorted({s["format"] for s in sessions if s["format"]})

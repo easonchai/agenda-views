@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
+import type { AgendaIndex, EventNow } from "./agenda";
 import { eventNow } from "./agenda";
 
 /* ------------------------------------------------------------ media query */
@@ -92,13 +93,13 @@ const clock = (() => {
  * Event-local "now", re-rendering once a minute. `null` during SSR and whenever
  * the visitor's date falls outside the event, which keeps SSR deterministic.
  */
-export function useEventNow(): { dayId: string; minutes: number } | null {
+export function useEventNow(index: AgendaIndex): EventNow | null {
   const minuteKey = useSyncExternalStore(
     clock.subscribe,
     clock.getSnapshot,
     () => 0,
   );
-  return minuteKey === 0 ? null : eventNow(new Date(minuteKey * 60_000));
+  return minuteKey === 0 ? null : eventNow(index, new Date(minuteKey * 60_000));
 }
 
 /* ----------------------------------------------------------------- theme */

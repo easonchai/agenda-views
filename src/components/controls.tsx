@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useId, useRef } from "react";
 import type { Day, Stage } from "@/lib/agenda";
 import { CloseIcon, SearchIcon, accentClass, cx } from "./primitives";
 
@@ -15,11 +15,14 @@ export function DayTabs({
   value,
   onChange,
   counts,
+  idPrefix,
 }: {
   days: Day[];
   value: string;
   onChange: (id: string) => void;
   counts: Record<string, number>;
+  /** namespaces tab/panel ids so two agendas can coexist on one page */
+  idPrefix: string;
 }) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -52,9 +55,9 @@ export function DayTabs({
           <button
             key={day.id}
             role="tab"
-            id={`tab-${day.id}`}
+            id={`${idPrefix}tab-${day.id}`}
             aria-selected={active}
-            aria-controls={`panel-${day.id}`}
+            aria-controls={`${idPrefix}panel-${day.id}`}
             tabIndex={active ? 0 : -1}
             onClick={() => onChange(day.id)}
             className={cx(
@@ -148,14 +151,15 @@ export function SearchField({
   onChange: (next: string) => void;
   resultCount: number;
 }) {
+  const inputId = useId();
   return (
     <div className="relative w-full sm:max-w-xs">
-      <label htmlFor="agenda-search" className="sr-only">
+      <label htmlFor={inputId} className="sr-only">
         Search sessions, speakers and stages
       </label>
       <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-text-subtle" />
       <input
-        id="agenda-search"
+        id={inputId}
         type="search"
         inputMode="search"
         autoComplete="off"

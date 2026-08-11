@@ -1,9 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { GridModel, PlacedSession, Session, Stage } from "@/lib/agenda";
+import { useEffect, useId, useRef, useState } from "react";
+import type {
+  EventNow,
+  GridModel,
+  PlacedSession,
+  Session,
+  SessionStatus,
+  Stage,
+} from "@/lib/agenda";
+import { useAgenda } from "@/lib/agenda-context";
 import {
-  NOW_ANCHOR_ID,
   buildGrid,
   formatRange,
   formatTime,
@@ -29,17 +36,24 @@ import {
  */
 
 /**
- * px per minute. 2.1 is the smallest scale at which the shortest real session
- * (30 min → 63px) still fits a time row plus a two-line title, which is the
- * minimum needed to identify a talk without opening it.
+ * px per minute. 2.3 is the smallest scale at which the shortest real session
+ * (30 min → 69px) still fits a time row plus a two-line title, which is the
+ * minimum needed to identify a talk without opening it. Overridable per
+ * instance for denser or sparser programmes.
  */
-const PX_PER_MINUTE = 2.3;
+export const DEFAULT_PX_PER_MINUTE = 2.3;
 const HEADER_HEIGHT = 56;
 /** hour ticks this close to the now-line are dropped so the labels can't collide */
 const TICK_SUPPRESS_MINUTES = 18;
 
+export type BlockDensity = {
+  titleLines: string;
+  speakers: boolean;
+  location: boolean;
+};
+
 /** How much a block can show, purely as a function of its height. */
-function density(minutes: number) {
+export function defaultDensity(minutes: number): BlockDensity {
   if (minutes < 30) return { titleLines: "clamp-1", speakers: false, location: false };
   if (minutes < 45) return { titleLines: "clamp-2", speakers: false, location: false };
   if (minutes < 60) return { titleLines: "clamp-2", speakers: true, location: false };
@@ -50,11 +64,15 @@ function density(minutes: number) {
 type Props = {
   sessions: Session[];
   stages: Stage[];
-  now: { dayId: string; minutes: number } | null;
+  now: EventNow | null;
   dayId: string;
   selectedId: string | null;
   onSelect: (session: Session) => void;
   hour12: boolean;
+  /** DOM id placed on the now-line, so an external control can scroll to it */
+  nowAnchorId?: string;
+  pxPerMinute?: number;
+  density?: (minutes: number) => BlockDensity;
 };
 
 export function TrackGrid({
@@ -65,7 +83,12 @@ export function TrackGrid({
   selectedId,
   onSelect,
   hour12,
+  nowAnchorId,
+  pxPerMinute = DEFAULT_PX_PER_MINUTE,
+  density = defaultDensity,
 }: Props) {
+  const index = useAgenda();
+  const blockIdPrefix = useId();
   const grid = buildGrid(sessions, stages);
   const scrollerRef = useRef<HTMLDivElement>(null);
   // the block currently under the pointer or keyboard focus, used to project
@@ -85,14 +108,14 @@ export function TrackGrid({
     if (nowOffset === null || scrolledFor.current === dayId) return;
     scrolledFor.current = dayId;
     scrollerRef.current?.scrollTo({
-      top: Math.max(0, nowOffset * PX_PER_MINUTE - 120),
+      top: Math.max(0, nowOffset * pxPerMinute - 120),
       behavior: "smooth",
     });
-  }, [nowOffset, dayId]);
+  }, [nowOffset, dayId, pxPerMinute]);
 
   if (!sessions.length) return null;
 
-  const bodyHeight = grid.totalMinutes * PX_PER_MINUTE;
+  const bodyHeight = grid.totalMinutes * pxPerMinute;
 
   return (
     <div
@@ -147,7 +170,7 @@ export function TrackGrid({
               <div
                 key={minute}
                 className="absolute right-0 left-0 -translate-y-1/2 pr-2 text-right"
-                style={{ top: (minute - grid.startMinutes) * PX_PER_MINUTE }}
+                style={{ top: (minute - grid.startMinutes) * pxPerMinute }}
               >
                 <span
                   className={cx(
@@ -167,8 +190,8 @@ export function TrackGrid({
             <div
               className="absolute right-0 left-0 animate-fade-in"
               style={{
-                top: active.offset * PX_PER_MINUTE,
-                height: active.duration * PX_PER_MINUTE,
+                top: active.offset * pxPerMinute,
+                height: active.duration * pxPerMinute,
               }}
             >
               <span
@@ -192,16 +215,19 @@ export function TrackGrid({
             className="relative border-r border-line last:border-r-0"
             style={{ height: bodyHeight }}
           >
-            <TimeRules grid={grid} />
+            <TimeRules grid={grid} pxPerMinute={pxPerMinute} />
             {lane.items.map((item) => (
               <GridBlock
                 key={item.session.id}
                 item={item}
                 selected={item.session.id === selectedId}
-                status={sessionStatus(item.session, now)}
+                status={sessionStatus(index, item.session, now)}
                 onSelect={onSelect}
                 onActivate={setActive}
                 hour12={hour12}
+                pxPerMinute={pxPerMinute}
+                density={density}
+                idPrefix={blockIdPrefix}
               />
             ))}
           </div>
@@ -213,8 +239,8 @@ export function TrackGrid({
             key={item.session.id}
             className="pointer-events-none absolute right-0 left-[var(--agenda-gutter)] z-10 px-1.5 py-0.5"
             style={{
-              top: HEADER_HEIGHT + item.offset * PX_PER_MINUTE,
-              height: item.duration * PX_PER_MINUTE,
+              top: HEADER_HEIGHT + item.offset * pxPerMinute,
+              height: item.duration * pxPerMinute,
             }}
           >
             <button
@@ -236,8 +262,8 @@ export function TrackGrid({
             aria-hidden
             className="pointer-events-none absolute right-0 left-[var(--agenda-gutter)] z-10 animate-fade-in"
             style={{
-              top: HEADER_HEIGHT + active.offset * PX_PER_MINUTE,
-              height: active.duration * PX_PER_MINUTE,
+              top: HEADER_HEIGHT + active.offset * pxPerMinute,
+              height: active.duration * pxPerMinute,
             }}
           >
             <span className="absolute top-0 right-0 left-0 border-t border-dashed border-[var(--color-brand)]/60" />
@@ -249,9 +275,9 @@ export function TrackGrid({
         {nowOffset !== null && (
           <div
             aria-hidden
-            id={NOW_ANCHOR_ID}
+            id={nowAnchorId}
             className="pointer-events-none absolute right-0 left-0 z-30 scroll-mt-40"
-            style={{ top: HEADER_HEIGHT + nowOffset * PX_PER_MINUTE }}
+            style={{ top: HEADER_HEIGHT + nowOffset * pxPerMinute }}
           >
             <div className="relative h-px bg-[var(--color-live)]">
               {/* the badge lives in the gutter with the other times; nearby hour
@@ -282,7 +308,13 @@ function isEdgeOf(active: PlacedSession, minute: number, gridStart: number) {
  * conference programme start on :30, and without a rule there the eye has
  * nothing to measure a block's top edge against.
  */
-function TimeRules({ grid }: { grid: GridModel }) {
+function TimeRules({
+  grid,
+  pxPerMinute,
+}: {
+  grid: GridModel;
+  pxPerMinute: number;
+}) {
   return (
     <>
       {grid.hours.map((minute) => (
@@ -290,7 +322,7 @@ function TimeRules({ grid }: { grid: GridModel }) {
           key={minute}
           aria-hidden
           className="absolute right-0 left-0 border-t border-line/70"
-          style={{ top: (minute - grid.startMinutes) * PX_PER_MINUTE }}
+          style={{ top: (minute - grid.startMinutes) * pxPerMinute }}
         />
       ))}
       {grid.halfHours.map((minute) => (
@@ -298,7 +330,7 @@ function TimeRules({ grid }: { grid: GridModel }) {
           key={minute}
           aria-hidden
           className="absolute right-0 left-0 border-t border-dotted border-line/50"
-          style={{ top: (minute - grid.startMinutes) * PX_PER_MINUTE }}
+          style={{ top: (minute - grid.startMinutes) * pxPerMinute }}
         />
       ))}
     </>
@@ -312,14 +344,21 @@ function GridBlock({
   onSelect,
   onActivate,
   hour12,
+  pxPerMinute,
+  density,
+  idPrefix,
 }: {
   item: PlacedSession;
   selected: boolean;
-  status: ReturnType<typeof sessionStatus>;
+  status: SessionStatus;
   onSelect: (session: Session) => void;
   onActivate: (item: PlacedSession | null) => void;
   hour12: boolean;
+  pxPerMinute: number;
+  density: (minutes: number) => BlockDensity;
+  idPrefix: string;
 }) {
+  const { stageById } = useAgenda();
   const { session, offset, duration, column, columns } = item;
   const fit = density(duration);
   const width = 100 / columns;
@@ -328,7 +367,7 @@ function GridBlock({
   return (
     <button
       type="button"
-      id={`grid-${session.id}`}
+      id={`${idPrefix}${session.id}`}
       onClick={() => onSelect(session)}
       onPointerEnter={() => onActivate(item)}
       onPointerLeave={() => onActivate(null)}
@@ -344,11 +383,11 @@ function GridBlock({
         "hover:z-20 hover:shadow-lg hover:shadow-black/5 focus-visible:z-20",
         selected && "z-20 ring-2 ring-[var(--color-brand)] ring-offset-1 ring-offset-surface-raised",
         status === "past" && "opacity-55 saturate-50",
-        sessionAccent(session),
+        sessionAccent(stageById, session),
       )}
       style={{
-        top: offset * PX_PER_MINUTE,
-        height: Math.max(duration * PX_PER_MINUTE - 4, 26),
+        top: offset * pxPerMinute,
+        height: Math.max(duration * pxPerMinute - 4, 26),
         left: `calc(${column * width}% + 4px)`,
         width: `calc(${width}% - 8px)`,
       }}

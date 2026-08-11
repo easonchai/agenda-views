@@ -1,4 +1,6 @@
 {
+  "timezone": "Asia/Kuala_Lumpur",
+  "utcOffsetMinutes": 480,
   "days": [
     {
       "id": "day-1",

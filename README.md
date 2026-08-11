@@ -81,6 +81,20 @@ Drawn from how Sched, Whova, Swapcard, Google I/O, WWDC, and the native Apple/Go
 - Visible focus rings everywhere; `prefers-reduced-motion` collapses all animation; pinch-zoom left enabled (`maximumScale: 5`).
 - Stage colours never carry meaning alone — every block also states its stage in text.
 
+## Extraction readiness
+
+The components hold no global state, so this is a copy-paste away from being a package rather than a rewrite.
+
+- **Data comes in as a prop.** `<AgendaShell agenda={…}>` wraps `<AgendaProvider>`; every component reads its agenda from `useAgenda()`. `lib/agenda.ts` imports nothing and takes an `AgendaIndex` argument — it is already the headless half.
+- **No framework lock-in in the views.** No `next/image` (plain `<img>`), no `next/navigation` below the shell. Only `AgendaShell` touches `useSearchParams`, gated behind `syncUrl`.
+- **Every DOM id is namespaced with `useId()`** — tabs, panels, search input, grid blocks, the now-anchor. `--agenda-sticky-top` is set on the instance root, not `<html>`, and custom properties inherit so descendants still read it.
+- **Tuning is props, not constants.** `pxPerMinute`, `density()`, `hour12`, `syncUrl`, `showThemeToggle`, `mainId`. Timezone and UTC offset live in the data.
+- **Theme is the app's job.** The library never writes `localStorage` or toggles `.dark`.
+
+`/multi` is the proof and the regression guard: two agendas, different data, different timezones, one page. Verified zero duplicate DOM ids, zero broken `label[for]`, independent day/stage/filter state, and only the first instance writing to the URL.
+
+Still app-side before publishing: convert the utility classes to a shipped stylesheet, move URL sync into a `useAgendaUrlState()` adapter, and add the build/exports config.
+
 ## Structure
 
 ```
@@ -95,6 +109,8 @@ src/
     session-sheet.tsx       bottom sheet / dialog
     controls.tsx            day tabs, stage chips, search, toggles
     primitives.tsx          badges, avatars, icons
+  lib/agenda-context.tsx    AgendaProvider / useAgenda
+app/multi/                  two-agendas-on-one-page proof route
 scripts/
   agenda-scraped.json       raw DOM extraction from aimto.my
   transform_agenda.py       scraped -> src/data/agenda.json

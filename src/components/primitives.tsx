@@ -1,6 +1,8 @@
-import Image from "next/image";
-import type { AccentId, Session, Speaker } from "@/lib/agenda";
-import { initials, stageById } from "@/lib/agenda";
+"use client";
+
+import type { AccentId, Session, Speaker, Stage } from "@/lib/agenda";
+import { initials } from "@/lib/agenda";
+import { useAgenda } from "@/lib/agenda-context";
 
 export function cx(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
@@ -13,10 +15,20 @@ export const accentClass: Record<AccentId, string> = {
   sky: "accent-sky",
 };
 
-export function sessionAccent(session: Session): string {
+/** Pure form, for callers that already hold the lookup. */
+export function sessionAccent(
+  stageById: Map<string, Stage>,
+  session: Session,
+): string {
   if (!session.stageId) return "accent-neutral";
   const stage = stageById.get(session.stageId);
   return stage ? accentClass[stage.accent] : "accent-neutral";
+}
+
+/** Hook form, for components rendering inside an `<AgendaProvider>`. */
+export function useSessionAccent(): (session: Session) => string {
+  const { stageById } = useAgenda();
+  return (session: Session) => sessionAccent(stageById, session);
 }
 
 /* --------------------------------------------------------------- badges */
@@ -28,6 +40,7 @@ export function StageBadge({
   session: Session;
   size?: "sm" | "md";
 }) {
+  const { stageById } = useAgenda();
   const stage = session.stageId ? stageById.get(session.stageId) : null;
   const label = stage?.name ?? "All stages";
   return (
@@ -85,12 +98,16 @@ export function SpeakerAvatar({
     );
   }
   return (
-    <Image
+    // plain <img>: these are remote, already-sized CDN avatars that were passing
+    // `unoptimized` anyway, and this keeps the component framework-agnostic
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={speaker.avatar}
       alt=""
       width={size}
       height={size}
-      unoptimized
+      loading="lazy"
+      decoding="async"
       style={{ width: size, height: size }}
       className="shrink-0 rounded-full object-cover ring-2 ring-surface-raised"
     />

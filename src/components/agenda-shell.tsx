@@ -2,24 +2,19 @@
 
 import type { ReadonlyURLSearchParams } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import type { Agenda, AgendaIndex, Session } from "@/lib/agenda";
 import {
-  NOW_ANCHOR_ID,
-  agenda,
   defaultDayId,
-  dayById,
   filterSessions,
   sortChronologically,
-  type Session,
 } from "@/lib/agenda";
+import { AgendaProvider, useAgenda } from "@/lib/agenda-context";
 import { useEventNow, useMediaQuery, useTheme } from "@/lib/hooks";
 import { AgendaList } from "./agenda-list";
 import { DayTabs, SearchField, StageFilter, ThemeToggle, ViewToggle } from "./controls";
-import { cx } from "./primitives";
 import { SessionSheet } from "./session-sheet";
 import { GridLegend, TrackGrid } from "./track-grid";
-
-const { days, stages, sessions } = agenda;
 
 type ViewMode = "grid" | "list";
 
@@ -31,16 +26,22 @@ type InitialState = {
   selectedId: string | null;
 };
 
-function readInitialState(params: URLSearchParams | ReadonlyURLSearchParams): InitialState {
-  const deepLinked = sessions.find((s) => s.id === params.get("session")) ?? null;
+function readInitialState(
+  index: AgendaIndex,
+  params: URLSearchParams | ReadonlyURLSearchParams,
+): InitialState {
+  const deepLinked =
+    index.sessions.find((s) => s.id === params.get("session")) ?? null;
   const urlDay = params.get("day");
   const urlView = params.get("view");
 
   return {
     // a ?session= link wins over ?day= — it implies its own day
-    dayId: deepLinked?.day ?? (urlDay && dayById.has(urlDay) ? urlDay : defaultDayId()),
+    dayId:
+      deepLinked?.day ??
+      (urlDay && index.dayById.has(urlDay) ? urlDay : defaultDayId(index)),
     stageIds: (params.get("stage")?.split(",") ?? []).filter((id) =>
-      stages.some((s) => s.id === id),
+      index.stages.some((s) => s.id === id),
     ),
     query: params.get("q") ?? "",
     view: urlView === "list" ? "list" : "grid",
@@ -48,9 +49,58 @@ function readInitialState(params: URLSearchParams | ReadonlyURLSearchParams): In
   };
 }
 
-export function AgendaShell() {
+/**
+ * Public entry: owns the provider so a consumer only passes data. The inner
+ * component is where all the state lives, and it reads its agenda from context
+ * exactly like any other consumer would.
+ */
+export function AgendaShell({
+  agenda,
+  syncUrl = true,
+  showThemeToggle = true,
+  mainId,
+}: {
+  agenda: Agenda;
+  /**
+   * Read and write `?day=&stage=&q=&view=&session=`. Exactly one agenda on a
+   * page may own the URL — a second instance with this on would clobber the
+   * first's params on every render. This is the seam that becomes a separate
+   * `useAgendaUrlState()` adapter when this is extracted.
+   */
+  syncUrl?: boolean;
+  /** theme is an app-level concern; off for embedded instances */
+  showThemeToggle?: boolean;
+  /** id for the `<main>`, e.g. as a skip-link target owned by the host page */
+  mainId?: string;
+}) {
+  return (
+    <AgendaProvider agenda={agenda}>
+      <AgendaShellInner
+        syncUrl={syncUrl}
+        showThemeToggle={showThemeToggle}
+        mainId={mainId}
+      />
+    </AgendaProvider>
+  );
+}
+
+function AgendaShellInner({
+  syncUrl,
+  showThemeToggle,
+  mainId,
+}: {
+  syncUrl: boolean;
+  showThemeToggle: boolean;
+  mainId?: string;
+}) {
+  const index = useAgenda();
+  const { days, stages, sessions } = index;
   const isWide = useMediaQuery("(min-width: 1024px)");
-  const now = useEventNow();
+  const now = useEventNow(index);
+  // unique per instance, so two agendas on one page do not fight over the id
+  const nowAnchorId = useId();
+  // every id this instance renders is namespaced by this
+  const uid = useId();
 
   /* ------------------------------------------------------------ url state */
 
@@ -58,7 +108,9 @@ export function AgendaShell() {
   // initializers run exactly once, on the client, with the real URL in hand —
   // no setState-in-effect, no hydration mismatch from Date/localStorage.
   const searchParams = useSearchParams();
-  const [initial] = useState(() => readInitialState(searchParams));
+  const [initial] = useState(() =>
+    readInitialState(index, syncUrl ? searchParams : new URLSearchParams()),
+  );
 
   const [dayId, setDayId] = useState(initial.dayId);
   const [stageIds, setStageIds] = useState<string[]>(initial.stageIds);
@@ -67,11 +119,13 @@ export function AgendaShell() {
   const [selectedId, setSelectedId] = useState<string | null>(initial.selectedId);
   const [theme, setTheme] = useTheme();
 
+  const rootRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
   // write back without pushing history entries — the back button should leave
   // the page, not step through every filter change
   useEffect(() => {
+    if (!syncUrl) return;
     const params = new URLSearchParams();
     if (dayId !== days[0].id) params.set("day", dayId);
     if (stageIds.length) params.set("stage", stageIds.join(","));
@@ -84,18 +138,18 @@ export function AgendaShell() {
       "",
       `${window.location.pathname}${search ? `?${search}` : ""}`,
     );
-  }, [dayId, stageIds, query, preferredView, selectedId]);
+  }, [syncUrl, days, dayId, stageIds, query, preferredView, selectedId]);
 
   /* --------------------------------------------------- sticky offset var */
 
   useEffect(() => {
     const node = headerRef.current;
-    if (!node) return;
+    const root = rootRef.current;
+    if (!node || !root) return;
+    // set on this instance's root, not <html>: custom properties inherit, so
+    // descendants still read it and a second agenda cannot clobber the first
     const sync = () =>
-      document.documentElement.style.setProperty(
-        "--agenda-sticky-top",
-        `${node.offsetHeight}px`,
-      );
+      root.style.setProperty("--agenda-sticky-top", `${node.offsetHeight}px`);
     sync();
     const observer = new ResizeObserver(sync);
     observer.observe(node);
@@ -105,35 +159,35 @@ export function AgendaShell() {
   /* ------------------------------------------------------------- derived */
 
   const visible = useMemo(
-    () => filterSessions(sessions, { dayId, stageIds, formats: [], query }),
-    [dayId, stageIds, query],
+    () => filterSessions(index, sessions, { dayId, stageIds, formats: [], query }),
+    [index, sessions, dayId, stageIds, query],
   );
 
   const visibleStages = useMemo(
     () => (stageIds.length ? stages.filter((s) => stageIds.includes(s.id)) : stages),
-    [stageIds],
+    [stages, stageIds],
   );
 
   const counts = useMemo(() => {
     const map: Record<string, number> = {};
     for (const s of sessions) map[s.day] = (map[s.day] ?? 0) + 1;
     return map;
-  }, []);
+  }, [sessions]);
 
   // the grid only makes sense with room for lanes; below `lg` we always list
   const view: ViewMode = isWide ? preferredView : "list";
   const selected = useMemo(
     () => sessions.find((s) => s.id === selectedId) ?? null,
-    [selectedId],
+    [sessions, selectedId],
   );
 
   const onSelect = useCallback((session: Session) => setSelectedId(session.id), []);
   const onClose = useCallback(() => setSelectedId(null), []);
 
-  const day = dayById.get(dayId)!;
+  const day = index.dayById.get(dayId)!;
 
   return (
-    <div className="min-h-dvh bg-surface">
+    <div ref={rootRef} className="min-h-dvh bg-surface">
       {/* --------------------------------------------------- masthead (scrolls) */}
       <header className="print-hide mx-auto max-w-[1400px] px-4 pt-4 pb-3 sm:px-6">
         <div className="flex items-start justify-between gap-4">
@@ -148,7 +202,7 @@ export function AgendaShell() {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <ViewToggle value={preferredView} onChange={setPreferredView} />
-            <ThemeToggle theme={theme} onChange={setTheme} />
+            {showThemeToggle && <ThemeToggle theme={theme} onChange={setTheme} />}
           </div>
         </div>
 
@@ -168,8 +222,14 @@ export function AgendaShell() {
       >
         <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-4 sm:flex-row sm:items-center sm:gap-4 sm:px-6">
           <div className="flex items-center gap-2">
-            <DayTabs days={days} value={dayId} onChange={setDayId} counts={counts} />
-            {now?.dayId === dayId && <JumpToNowButton />}
+            <DayTabs
+              days={days}
+              value={dayId}
+              onChange={setDayId}
+              counts={counts}
+              idPrefix={uid}
+            />
+            {now?.dayId === dayId && <JumpToNowButton anchorId={nowAnchorId} />}
           </div>
           <div className="min-w-0 sm:ml-auto">
             <StageFilter stages={stages} value={stageIds} onChange={setStageIds} />
@@ -178,11 +238,11 @@ export function AgendaShell() {
       </div>
 
       {/* -------------------------------------------------------------- body */}
-      <main id="agenda" className="mx-auto max-w-[1400px] px-4 py-4 sm:px-6">
+      <main id={mainId} className="mx-auto max-w-[1400px] px-4 py-4 sm:px-6">
         <div
           role="tabpanel"
-          id={`panel-${dayId}`}
-          aria-labelledby={`tab-${dayId}`}
+          id={`${uid}panel-${dayId}`}
+          aria-labelledby={`${uid}tab-${dayId}`}
           tabIndex={-1}
         >
           {visible.length === 0 ? (
@@ -203,6 +263,7 @@ export function AgendaShell() {
                 selectedId={selectedId}
                 onSelect={onSelect}
                 hour12
+                nowAnchorId={nowAnchorId}
               />
               <div className="mt-2">
                 <GridLegend hour12 />
@@ -220,6 +281,7 @@ export function AgendaShell() {
                 dayId={dayId}
                 onSelect={onSelect}
                 hour12
+                nowAnchorId={nowAnchorId}
               />
             </div>
           )}
@@ -232,13 +294,13 @@ export function AgendaShell() {
 }
 
 /** Scrolls whichever view is mounted to its shared "now" anchor. */
-function JumpToNowButton() {
+function JumpToNowButton({ anchorId }: { anchorId: string }) {
   return (
     <button
       type="button"
       onClick={() =>
         document
-          .getElementById(NOW_ANCHOR_ID)
+          .getElementById(anchorId)
           ?.scrollIntoView({ block: "center", behavior: "smooth" })
       }
       className="flex h-11 shrink-0 items-center gap-1.5 rounded-xl border border-line px-3 text-[13px] font-semibold text-text-muted transition hover:text-text"
@@ -271,9 +333,10 @@ function EmptyState({ query, onReset }: { query: string; onReset: () => void }) 
  * reader cannot follow. This mirrors the same sessions as a flat, ordered list.
  */
 function ScreenReaderAgenda({ sessions: list }: { sessions: Session[] }) {
+  const index = useAgenda();
   return (
     <ol className="sr-only">
-      {sortChronologically(list).map((s) => (
+      {sortChronologically(index, list).map((s) => (
         <li key={s.id}>
           {s.start} to {s.end}
           {s.stageId ? `, ${s.stageId.replace(/-/g, " ")} stage` : ", all stages"}:{" "}
@@ -286,4 +349,3 @@ function ScreenReaderAgenda({ sessions: list }: { sessions: Session[] }) {
   );
 }
 
-export { cx };
