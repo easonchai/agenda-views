@@ -9,7 +9,7 @@ import type {
   SessionStatus,
   Stage,
 } from "../lib/agenda.js";
-import { useAgenda } from "../lib/agenda-context.js";
+import { useAgenda, useClassNames, useLabels } from "../lib/agenda-context.js";
 import {
   buildGrid,
   formatRange,
@@ -88,6 +88,8 @@ export function TrackGrid({
   density = defaultDensity,
 }: Props) {
   const index = useAgenda();
+  const labels = useLabels();
+  const classNames = useClassNames();
   const blockIdPrefix = useId();
   const grid = buildGrid(sessions, stages);
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -141,6 +143,7 @@ export function TrackGrid({
               "sticky top-0 z-20 flex flex-col justify-center border-b border-line px-3.5",
               "bg-linear-to-b from-[var(--accent-tint)] to-surface-raised",
               accentFor(stage.accent),
+              classNames.laneHeader,
             )}
             style={{ height: HEADER_HEIGHT }}
           >
@@ -368,6 +371,7 @@ function GridBlock({
   idPrefix: string;
 }) {
   const { stageById } = useAgenda();
+  const classNames = useClassNames();
   const { session, offset, duration, column, columns } = item;
   const fit = density(duration);
   const width = 100 / columns;
@@ -394,6 +398,7 @@ function GridBlock({
         selected && "z-20 ring-2 ring-[var(--color-brand)] ring-offset-1 ring-offset-surface-raised",
         status === "past" && "opacity-55 saturate-50",
         sessionAccent(stageById, session),
+        classNames.gridBlock,
       )}
       style={{
         top: offset * pxPerMinute,

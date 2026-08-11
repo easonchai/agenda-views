@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { EventNow, Session, SessionStatus } from "../lib/agenda.js";
-import { useAgenda } from "../lib/agenda-context.js";
+import { useAgenda, useClassNames, useLabels } from "../lib/agenda-context.js";
 import {
   durationMinutes,
   formatDuration,
@@ -48,6 +48,8 @@ export function AgendaList({
   nowAnchorId,
 }: Props) {
   const index = useAgenda();
+  const labels = useLabels();
+  const classNames = useClassNames();
   const groups = groupByStart(index, sessions);
   const liveRef = useRef<HTMLDivElement>(null);
   const scrolledFor = useRef<string | null>(null);
@@ -73,7 +75,7 @@ export function AgendaList({
   }, [dayId, liveIndex]);
 
   return (
-    <ol className="space-y-0">
+    <ol className={cx("space-y-0", classNames.list)}>
       {groups.map((group, groupIndex) => {
         const anyLive = groupIndex === liveIndex;
 
@@ -83,7 +85,7 @@ export function AgendaList({
             <div
               ref={anyLive ? liveRef : undefined}
               id={anyLive ? nowAnchorId : undefined}
-              className="sticky top-[var(--agenda-sticky-top,0px)] z-10 -mx-5 flex items-center gap-3 scroll-mt-[calc(var(--agenda-sticky-top,0px)+1rem)] bg-surface/92 px-5 py-2.5 backdrop-blur-md"
+              className={cx("sticky top-[var(--agenda-sticky-top,0px)] z-10 -mx-5 flex items-center gap-3 scroll-mt-[calc(var(--agenda-sticky-top,0px)+1rem)] bg-surface/92 px-5 py-2.5 backdrop-blur-md", classNames.listRail)}
             >
               <span className="font-mono text-sm font-semibold tabular-nums text-text">
                 {formatTime(group.start, hour12)}
@@ -91,7 +93,7 @@ export function AgendaList({
               <span aria-hidden className="h-px flex-1 bg-line" />
               {group.sessions.length > 1 && (
                 <span className="text-[11px] text-text-subtle">
-                  {group.sessions.length} in parallel
+                  {labels.inParallel(group.sessions.length)}
                 </span>
               )}
               {anyLive && nowMinutes !== null && <LiveBadge />}
@@ -128,6 +130,7 @@ function AgendaRow({
   hour12: boolean;
 }) {
   const { stageById } = useAgenda();
+  const classNames = useClassNames();
   const stage = session.stageId ? stageById.get(session.stageId) : null;
   const minutes = durationMinutes(session);
 
@@ -157,6 +160,7 @@ function AgendaRow({
         "active:scale-[0.99] sm:hover:-translate-y-px sm:hover:shadow-(--shadow-lift)",
         status === "past" && "opacity-60",
         sessionAccent(stageById, session),
+        classNames.listCard,
       )}
     >
       {/*

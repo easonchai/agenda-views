@@ -24,7 +24,15 @@ export {
   useSessionAccent,
 } from "./components/primitives.js";
 
-export { AgendaProvider, useAgenda } from "./lib/agenda-context.js";
+export {
+  AgendaProvider,
+  useAgenda,
+  useClassNames,
+  useLabels,
+} from "./lib/agenda-context.js";
+export type { AgendaProviderProps } from "./lib/agenda-context.js";
+export { defaultLabels, resolveLabels } from "./lib/config.js";
+export type { AgendaClassNames, AgendaLabels } from "./lib/config.js";
 export { useEventNow, useMediaQuery, useScrollLock, useTheme } from "./lib/hooks.js";
 export type { Theme } from "./lib/hooks.js";
 

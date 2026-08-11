@@ -2,7 +2,7 @@
 
 import type { AccentId, Session, Speaker, Stage } from "../lib/agenda.js";
 import { initials } from "../lib/agenda.js";
-import { useAgenda } from "../lib/agenda-context.js";
+import { useAgenda, useLabels } from "../lib/agenda-context.js";
 
 export function cx(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
@@ -41,8 +41,9 @@ export function StageBadge({
   size?: "sm" | "md";
 }) {
   const { stageById } = useAgenda();
+  const labels = useLabels();
   const stage = session.stageId ? stageById.get(session.stageId) : null;
-  const label = stage?.name ?? "All stages";
+  const label = stage?.name ?? labels.allStages;
   return (
     <span
       className={cx(
@@ -69,10 +70,11 @@ export function FormatBadge({ format }: { format: string }) {
 }
 
 export function LiveBadge() {
+  const labels = useLabels();
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-live)] px-2 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase">
       <span aria-hidden className="size-1.5 rounded-full bg-white animate-live-pulse" />
-      Live
+      {labels.live}
     </span>
   );
 }

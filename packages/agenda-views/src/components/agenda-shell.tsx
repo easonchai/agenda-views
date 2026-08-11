@@ -5,10 +5,12 @@ import type { Agenda, Session } from "../lib/agenda.js";
 import { filterSessions, sortChronologically } from "../lib/agenda.js";
 import type { AgendaState, AgendaStatePatch } from "../lib/state.js";
 import { resolveAgendaState } from "../lib/state.js";
-import { AgendaProvider, useAgenda } from "../lib/agenda-context.js";
+import { AgendaProvider, useAgenda, useClassNames, useLabels } from "../lib/agenda-context.js";
+import type { AgendaClassNames, AgendaLabels } from "../lib/config.js";
 import { useEventNow, useMediaQuery, useTheme } from "../lib/hooks.js";
 import { AgendaList } from "./agenda-list.js";
 import { DayTabs, SearchField, StageFilter, ThemeToggle, ViewToggle } from "./controls.js";
+import { cx } from "./primitives.js";
 import { SessionSheet } from "./session-sheet.js";
 import { GridLegend, TrackGrid } from "./track-grid.js";
 
@@ -37,11 +39,20 @@ export type AgendaShellProps = {
   /** id for the `<main>`, e.g. a skip-link target owned by the host page. */
   mainId?: string;
   className?: string;
+  /** Override any user-visible string. Partial — merged over the defaults. */
+  labels?: Partial<AgendaLabels>;
+  /** Append classes to structural slots without rebuilding the layout. */
+  classNames?: AgendaClassNames;
 };
 
-export function AgendaShell({ agenda, ...props }: AgendaShellProps) {
+export function AgendaShell({
+  agenda,
+  labels,
+  classNames,
+  ...props
+}: AgendaShellProps) {
   return (
-    <AgendaProvider agenda={agenda}>
+    <AgendaProvider agenda={agenda} labels={labels} classNames={classNames}>
       <AgendaShellInner {...props} />
     </AgendaProvider>
   );
@@ -57,8 +68,10 @@ function AgendaShellInner({
   showThemeToggle = false,
   mainId,
   className,
-}: Omit<AgendaShellProps, "agenda">) {
+}: Omit<AgendaShellProps, "agenda" | "labels" | "classNames">) {
   const index = useAgenda();
+  const labels = useLabels();
+  const slots = useClassNames();
   const { days, stages, sessions } = index;
   const isWide = useMediaQuery(gridBreakpoint);
   const now = useEventNow(index);
@@ -154,9 +167,9 @@ function AgendaShellInner({
   const day = index.dayById.get(dayId)!;
 
   return (
-    <div ref={rootRef} className="min-h-dvh bg-surface">
+    <div ref={rootRef} className={cx("min-h-dvh bg-surface", slots.root, className)}>
       {/* --------------------------------------------------- masthead (scrolls) */}
-      <header className="print-hide masthead-bloom border-b border-line/60">
+      <header className={cx("print-hide masthead-bloom border-b border-line/60", slots.masthead)}>
         <div className="mx-auto max-w-[1400px] px-5 pt-6 pb-4 sm:px-8 sm:pt-8">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
@@ -174,14 +187,10 @@ function AgendaShellInner({
               <span aria-hidden className="text-text-subtle">
                 ·
               </span>
-              <span>
-                {visible.length === counts[dayId]
-                  ? `${counts[dayId]} sessions`
-                  : `${visible.length} of ${counts[dayId]} sessions`}
-              </span>
+              <span>{labels.sessionsCount(visible.length, counts[dayId])}</span>
               {stageIds.length > 0 && (
                 <span className="rounded-full bg-surface-sunken px-2 py-0.5 text-[11px] font-semibold text-text-muted">
-                  filtered
+                  {labels.filtered}
                 </span>
               )}
             </p>
@@ -216,7 +225,9 @@ function AgendaShellInner({
               counts={counts}
               idPrefix={uid}
             />
-            {now?.dayId === dayId && <JumpToNowButton anchorId={nowAnchorId} />}
+            {now?.dayId === dayId && (
+              <JumpToNowButton anchorId={nowAnchorId} label={labels.now} />
+            )}
           </div>
           <div className="min-w-0 sm:ml-auto">
             <StageFilter stages={stages} value={stageIds} onChange={setStageIds} />
@@ -225,7 +236,7 @@ function AgendaShellInner({
       </div>
 
       {/* -------------------------------------------------------------- body */}
-      <main id={mainId} className="mx-auto max-w-[1400px] px-5 py-5 sm:px-8 sm:py-6">
+      <main id={mainId} className={cx("mx-auto max-w-[1400px] px-5 py-5 sm:px-8 sm:py-6", slots.main)}>
         <div
           role="tabpanel"
           id={`${uid}panel-${dayId}`}
@@ -235,6 +246,7 @@ function AgendaShellInner({
           {visible.length === 0 ? (
             <EmptyState
               query={query}
+              labels={labels}
               onReset={() => {
                 setQuery("");
                 setStageIds([]);
@@ -281,7 +293,7 @@ function AgendaShellInner({
 }
 
 /** Scrolls whichever view is mounted to its shared "now" anchor. */
-function JumpToNowButton({ anchorId }: { anchorId: string }) {
+function JumpToNowButton({ anchorId, label }: { anchorId: string; label: string }) {
   return (
     <button
       type="button"
@@ -296,23 +308,31 @@ function JumpToNowButton({ anchorId }: { anchorId: string }) {
         aria-hidden
         className="size-2 rounded-full bg-[var(--color-live)] ring-3 ring-[var(--color-live)]/20"
       />
-      Now
+      {label}
     </button>
   );
 }
 
-function EmptyState({ query, onReset }: { query: string; onReset: () => void }) {
+function EmptyState({
+  query,
+  labels,
+  onReset,
+}: {
+  query: string;
+  labels: AgendaLabels;
+  onReset: () => void;
+}) {
   return (
     <div className="lane-empty rounded-2xl border border-dashed border-line-strong px-6 py-20 text-center">
       <p className="text-sm font-medium text-text">
-        {query ? `No sessions match “${query}”.` : "No sessions match these filters."}
+        {labels.emptyTitle(query)}
       </p>
       <button
         type="button"
         onClick={onReset}
         className="mt-4 h-11 rounded-xl border border-line bg-surface-raised px-5 text-sm font-semibold text-text shadow-(--shadow-card) transition hover:border-line-strong hover:bg-surface-sunken"
       >
-        Clear filters
+        {labels.clearFilters}
       </button>
     </div>
   );

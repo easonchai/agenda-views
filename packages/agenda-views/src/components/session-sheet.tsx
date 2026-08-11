@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { EventNow, Session } from "../lib/agenda.js";
-import { useAgenda } from "../lib/agenda-context.js";
+import { useAgenda, useClassNames, useLabels } from "../lib/agenda-context.js";
 import {
   durationMinutes,
   formatDuration,
@@ -55,6 +55,8 @@ type Props = {
  */
 export function SessionSheet({ session, now, onClose, hour12 }: Props) {
   const index = useAgenda();
+  const labels = useLabels();
+  const classNames = useClassNames();
   const open = session !== null;
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
@@ -123,6 +125,7 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
           "rounded-t-2xl border border-line bg-surface-raised shadow-2xl",
           "sm:max-w-lg sm:rounded-2xl",
           sessionAccent(index.stageById, session),
+          classNames.sheet,
         )}
       >
         {/* drag affordance — visual only; the sheet closes via backdrop/Esc/button */}
@@ -147,7 +150,7 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close session details"
+            aria-label={labels.closeSession}
             className="-mr-1 grid size-11 shrink-0 place-items-center rounded-full text-text-muted transition hover:bg-surface-sunken hover:text-text"
           >
             <CloseIcon className="size-4" />
@@ -181,7 +184,7 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
               <dt className="sr-only">Location</dt>
               <PinIcon className="mt-0.5 size-4 shrink-0 text-text-subtle" />
               <dd className="text-text">
-                {session.location ?? stage?.venue ?? "Venue-wide"}
+                {session.location ?? stage?.venue ?? labels.venueWide}
               </dd>
             </div>
           </dl>
@@ -195,7 +198,7 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
           {session.speakers.length > 0 && (
             <section className="mt-5">
               <h3 className="text-xs font-semibold tracking-wider text-text-subtle uppercase">
-                {session.speakers.length === 1 ? "Speaker" : "Speakers"}
+                {session.speakers.length === 1 ? labels.speaker : labels.speakers}
               </h3>
               <ul className="mt-2.5 grid gap-2.5">
                 {session.speakers.map((speaker) => (
@@ -227,7 +230,7 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
             className="flex h-12 w-full items-center justify-center gap-2.5 rounded-xl bg-[var(--color-brand)] text-sm font-semibold text-white shadow-(--shadow-card) transition hover:opacity-90 active:scale-[0.99]"
           >
             <GoogleCalendarIcon className="size-4" />
-            Add to Google Calendar
+            {labels.addToGoogleCalendar}
           </a>
 
           <div className="grid grid-cols-2 gap-2">
@@ -237,7 +240,7 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
               className="flex h-11 items-center justify-center gap-2 rounded-xl border border-line bg-surface-raised text-[13px] font-semibold text-text-muted transition hover:border-line-strong hover:text-text active:scale-[0.99]"
             >
               <DownloadIcon className="size-3.5" />
-              Apple / .ics
+              {labels.downloadIcs}
             </button>
             <CopyLinkButton sessionId={session.id} />
           </div>

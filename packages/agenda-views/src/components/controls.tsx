@@ -2,6 +2,7 @@
 
 import { useId, useRef } from "react";
 import type { Day, Stage } from "../lib/agenda.js";
+import { useLabels } from "../lib/agenda-context.js";
 import { CloseIcon, SearchIcon, accentClass, cx } from "./primitives.js";
 
 /* ------------------------------------------------------------- day tabs */
@@ -24,6 +25,7 @@ export function DayTabs({
   /** namespaces tab/panel ids so two agendas can coexist on one page */
   idPrefix: string;
 }) {
+  const labels = useLabels();
   const listRef = useRef<HTMLDivElement>(null);
 
   const onKeyDown = (event: React.KeyboardEvent) => {
@@ -45,7 +47,7 @@ export function DayTabs({
     <div
       ref={listRef}
       role="tablist"
-      aria-label="Select event day"
+      aria-label={labels.dayTabsLabel}
       onKeyDown={onKeyDown}
       className="inline-flex shrink-0 rounded-2xl bg-surface-sunken p-1.5 ring-1 ring-line/60"
     >
@@ -92,13 +94,14 @@ export function StageFilter({
   value: string[];
   onChange: (next: string[]) => void;
 }) {
+  const labels = useLabels();
   const toggle = (id: string) =>
     onChange(value.includes(id) ? value.filter((s) => s !== id) : [...value, id]);
 
   return (
     <div
       role="group"
-      aria-label="Filter by stage"
+      aria-label={labels.stageFilterLabel}
       /*
         `scroll-px-4` is load-bearing, not decoration. With `snap-x` + a
         `snap-start` child, the browser aligns the first chip to the scrollport
@@ -118,7 +121,7 @@ export function StageFilter({
             : "border-line text-text-muted hover:border-line-strong hover:bg-surface-sunken hover:text-text",
         )}
       >
-        All stages
+        {labels.allStages}
       </button>
 
       {stages.map((stage) => {
@@ -163,11 +166,12 @@ export function SearchField({
   onChange: (next: string) => void;
   resultCount: number;
 }) {
+  const labels = useLabels();
   const inputId = useId();
   return (
     <div className="relative w-full sm:max-w-xs">
       <label htmlFor={inputId} className="sr-only">
-        Search sessions, speakers and stages
+        {labels.searchLabel}
       </label>
       <SearchIcon className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-text-subtle" />
       <input
@@ -176,7 +180,7 @@ export function SearchField({
         inputMode="search"
         autoComplete="off"
         value={value}
-        placeholder="Search sessions or speakers"
+        placeholder={labels.searchPlaceholder}
         onChange={(e) => onChange(e.target.value)}
         className="h-11 w-full rounded-xl border border-line bg-surface-raised pr-10 pl-10 text-sm text-text shadow-(--shadow-card) transition placeholder:text-text-subtle hover:border-line-strong focus:border-[var(--color-brand)]"
       />
@@ -184,7 +188,7 @@ export function SearchField({
         <button
           type="button"
           onClick={() => onChange("")}
-          aria-label="Clear search"
+          aria-label={labels.clearSearch}
           className="absolute top-1/2 right-1.5 grid size-8 -translate-y-1/2 place-items-center rounded-full text-text-subtle transition hover:bg-surface-sunken hover:text-text"
         >
           <CloseIcon className="size-3.5" />
@@ -192,7 +196,7 @@ export function SearchField({
       )}
       {/* announced to screen readers as the user types, without stealing focus */}
       <p aria-live="polite" className="sr-only">
-        {value ? `${resultCount} sessions match ${value}` : ""}
+        {value ? labels.searchResults(resultCount, value) : ""}
       </p>
     </div>
   );
@@ -207,10 +211,11 @@ export function ViewToggle({
   value: "grid" | "list";
   onChange: (next: "grid" | "list") => void;
 }) {
+  const labels = useLabels();
   return (
     <div
       role="group"
-      aria-label="Layout"
+      aria-label={labels.layoutLabel}
       className="hidden rounded-2xl bg-surface-sunken p-1.5 ring-1 ring-line/60 lg:inline-flex"
     >
       {(["grid", "list"] as const).map((mode) => (
@@ -226,7 +231,7 @@ export function ViewToggle({
               : "text-text-muted hover:text-text",
           )}
         >
-          {mode === "grid" ? "Time grid" : "Agenda"}
+          {mode === "grid" ? labels.gridView : labels.listView}
         </button>
       ))}
     </div>

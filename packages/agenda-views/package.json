@@ -11,8 +11,7 @@
     "conference",
     "event",
     "timeline",
-    "tailwind",
-    "shadcn"
+    "tailwind"
   ],
   "license": "MIT",
   "author": "easonchai",
@@ -61,15 +60,14 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && node scripts/build-registry.mjs",
+    "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf dist",
     "prepack": "pnpm run clean && pnpm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint:publish": "publint --strict && attw --pack .",
-    "validate": "pnpm run typecheck && pnpm run test && pnpm run build && pnpm run lint:publish",
-    "build:registry": "node scripts/build-registry.mjs"
+    "validate": "pnpm run typecheck && pnpm run test && pnpm run build && pnpm run lint:publish"
   },
   "peerDependencies": {
     "next": ">=14",
