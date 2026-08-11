@@ -11,20 +11,25 @@ import { CloseIcon, SearchIcon, accentClass, cx } from "./primitives.js";
  * Real WAI-ARIA tabs: roving tabindex, arrow-key navigation, Home/End.
  * Tab moves *out* of the tablist rather than between tabs.
  */
+export type DayTabsProps = {
+  days: Day[];
+  value: string;
+  onChange: (id: string) => void;
+  /** session counts per day, announced to screen readers */
+  counts?: Record<string, number>;
+  /** namespaces tab/panel ids so two agendas can coexist on one page */
+  idPrefix?: string;
+};
+
 export function DayTabs({
   days,
   value,
   onChange,
   counts,
   idPrefix,
-}: {
-  days: Day[];
-  value: string;
-  onChange: (id: string) => void;
-  counts: Record<string, number>;
-  /** namespaces tab/panel ids so two agendas can coexist on one page */
-  idPrefix: string;
-}) {
+}: DayTabsProps) {
+  const autoId = useId();
+  const prefix = idPrefix ?? autoId;
   const labels = useLabels();
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -57,9 +62,9 @@ export function DayTabs({
           <button
             key={day.id}
             role="tab"
-            id={`${idPrefix}tab-${day.id}`}
+            id={`${prefix}tab-${day.id}`}
             aria-selected={active}
-            aria-controls={`${idPrefix}panel-${day.id}`}
+            aria-controls={`${prefix}panel-${day.id}`}
             tabIndex={active ? 0 : -1}
             onClick={() => onChange(day.id)}
             className={cx(
@@ -71,7 +76,9 @@ export function DayTabs({
           >
             {day.label}
             <span className="ml-1.5 font-normal text-text-subtle">{day.short}</span>
-            <span className="sr-only">, {counts[day.id] ?? 0} sessions</span>
+            {counts ? (
+              <span className="sr-only">, {counts[day.id] ?? 0} sessions</span>
+            ) : null}
           </button>
         );
       })}
@@ -85,15 +92,13 @@ export function DayTabs({
  * Multi-select filter. Not tabs, not radios — these are toggle buttons, so
  * `aria-pressed` is the correct state, and "All stages" is the empty selection.
  */
-export function StageFilter({
-  stages,
-  value,
-  onChange,
-}: {
+export type StageFilterProps = {
   stages: Stage[];
   value: string[];
   onChange: (next: string[]) => void;
-}) {
+};
+
+export function StageFilter({ stages, value, onChange }: StageFilterProps) {
   const labels = useLabels();
   const toggle = (id: string) =>
     onChange(value.includes(id) ? value.filter((s) => s !== id) : [...value, id]);
@@ -157,15 +162,14 @@ export function StageFilter({
 
 /* -------------------------------------------------------------- search */
 
-export function SearchField({
-  value,
-  onChange,
-  resultCount,
-}: {
+export type SearchFieldProps = {
   value: string;
   onChange: (next: string) => void;
-  resultCount: number;
-}) {
+  /** used only for the screen-reader result announcement */
+  resultCount?: number;
+};
+
+export function SearchField({ value, onChange, resultCount = 0 }: SearchFieldProps) {
   const labels = useLabels();
   const inputId = useId();
   return (
@@ -204,13 +208,12 @@ export function SearchField({
 
 /* --------------------------------------------------------- view toggle */
 
-export function ViewToggle({
-  value,
-  onChange,
-}: {
+export type ViewToggleProps = {
   value: "grid" | "list";
   onChange: (next: "grid" | "list") => void;
-}) {
+};
+
+export function ViewToggle({ value, onChange }: ViewToggleProps) {
   const labels = useLabels();
   return (
     <div
@@ -238,13 +241,12 @@ export function ViewToggle({
   );
 }
 
-export function ThemeToggle({
-  theme,
-  onChange,
-}: {
+export type ThemeToggleProps = {
   theme: "light" | "dark";
   onChange: (next: "light" | "dark") => void;
-}) {
+};
+
+export function ThemeToggle({ theme, onChange }: ThemeToggleProps) {
   return (
     <button
       type="button"

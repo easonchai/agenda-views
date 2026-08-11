@@ -61,14 +61,15 @@ export function defaultDensity(minutes: number): BlockDensity {
   return { titleLines: "clamp-3", speakers: true, location: true };
 }
 
-type Props = {
+export type TrackGridProps = {
   sessions: Session[];
   stages: Stage[];
   now: EventNow | null;
   dayId: string;
   selectedId: string | null;
   onSelect: (session: Session) => void;
-  hour12: boolean;
+  /** 12-hour clock. Default true. */
+  hour12?: boolean;
   /** DOM id placed on the now-line, so an external control can scroll to it */
   nowAnchorId?: string;
   pxPerMinute?: number;
@@ -82,11 +83,11 @@ export function TrackGrid({
   dayId,
   selectedId,
   onSelect,
-  hour12,
+  hour12 = true,
   nowAnchorId,
   pxPerMinute = DEFAULT_PX_PER_MINUTE,
   density = defaultDensity,
-}: Props) {
+}: TrackGridProps) {
   const index = useAgenda();
   const labels = useLabels();
   const classNames = useClassNames();
@@ -365,7 +366,8 @@ function GridBlock({
   status: SessionStatus;
   onSelect: (session: Session) => void;
   onActivate: (item: PlacedSession | null) => void;
-  hour12: boolean;
+  /** 12-hour clock. Default true. */
+  hour12?: boolean;
   pxPerMinute: number;
   density: (minutes: number) => BlockDensity;
   idPrefix: string;

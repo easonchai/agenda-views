@@ -9,10 +9,19 @@ export { AgendaShell } from "./components/agenda-shell.js";
 export type { AgendaShellProps } from "./components/agenda-shell.js";
 
 export { TrackGrid, GridLegend, defaultDensity, DEFAULT_PX_PER_MINUTE } from "./components/track-grid.js";
-export type { BlockDensity } from "./components/track-grid.js";
+export type { BlockDensity, TrackGridProps } from "./components/track-grid.js";
 export { AgendaList } from "./components/agenda-list.js";
+export type { AgendaListProps } from "./components/agenda-list.js";
 export { SessionSheet } from "./components/session-sheet.js";
+export type { SessionSheetProps } from "./components/session-sheet.js";
 export { DayTabs, SearchField, StageFilter, ThemeToggle, ViewToggle } from "./components/controls.js";
+export type {
+  DayTabsProps,
+  SearchFieldProps,
+  StageFilterProps,
+  ThemeToggleProps,
+  ViewToggleProps,
+} from "./components/controls.js";
 export {
   FormatBadge,
   LiveBadge,

@@ -29,12 +29,13 @@ import {
  * concurrency is communicated by grouping rather than by column position.
  */
 
-type Props = {
+export type AgendaListProps = {
   sessions: Session[];
   now: EventNow | null;
   dayId: string;
   onSelect: (session: Session) => void;
-  hour12: boolean;
+  /** 12-hour clock. Default true. */
+  hour12?: boolean;
   /** DOM id placed on the live time rail, for an external "jump to now" */
   nowAnchorId?: string;
 };
@@ -44,9 +45,9 @@ export function AgendaList({
   now,
   dayId,
   onSelect,
-  hour12,
+  hour12 = true,
   nowAnchorId,
-}: Props) {
+}: AgendaListProps) {
   const index = useAgenda();
   const labels = useLabels();
   const classNames = useClassNames();
@@ -127,7 +128,8 @@ function AgendaRow({
   session: Session;
   status: SessionStatus;
   onSelect: (session: Session) => void;
-  hour12: boolean;
+  /** 12-hour clock. Default true. */
+  hour12?: boolean;
 }) {
   const { stageById } = useAgenda();
   const classNames = useClassNames();

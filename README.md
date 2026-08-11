@@ -41,7 +41,8 @@ pnpm validate   # typecheck + tests + build + publint + attw
 
 ## Using the library
 
-Full API documentation: **[packages/agenda-views/README.md](packages/agenda-views/README.md)**
+- **[API reference](docs/api.md)** — every component, hook, prop and CSS variable
+- **[Package README](packages/agenda-views/README.md)** — install, setup, customisation
 
 ```bash
 npm i agenda-views

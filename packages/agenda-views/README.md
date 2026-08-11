@@ -15,7 +15,7 @@ import "agenda-views/styles.css";
 <AgendaShell agenda={agenda} />;
 ```
 
-**[Live demo](https://aimto-agenda.vercel.app)** · [Two agendas on one page](https://aimto-agenda.vercel.app/multi)
+**[Live demo](https://aimto-agenda.vercel.app)** · **[Full API reference](https://github.com/easonchai/agenda-views/blob/main/docs/api.md)** · [Two agendas on one page](https://aimto-agenda.vercel.app/multi)
 
 ## Entry points
 

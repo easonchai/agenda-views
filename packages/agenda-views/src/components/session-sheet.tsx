@@ -41,11 +41,12 @@ function formatUtcOffset(minutes: number): string {
   return `GMT${sign}${h}${m ? `:${String(m).padStart(2, "0")}` : ""}`;
 }
 
-type Props = {
+export type SessionSheetProps = {
   session: Session | null;
   now: EventNow | null;
   onClose: () => void;
-  hour12: boolean;
+  /** 12-hour clock. Default true. */
+  hour12?: boolean;
 };
 
 /**
@@ -53,7 +54,12 @@ type Props = {
  * dialog above it. Both are a real modal — focus is trapped, Escape closes,
  * background scroll is locked, and focus returns to the trigger on close.
  */
-export function SessionSheet({ session, now, onClose, hour12 }: Props) {
+export function SessionSheet({
+  session,
+  now,
+  onClose,
+  hour12 = true,
+}: SessionSheetProps) {
   const index = useAgenda();
   const labels = useLabels();
   const classNames = useClassNames();
