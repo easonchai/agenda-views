@@ -1,6 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import agendaData from "@/data/agenda.json";
+import type { Agenda } from "@/lib/agenda";
+import {
+  eventName,
+  eventShortName,
+  formatDateRange,
+  siteDescription,
+  siteUrl,
+  venueLocality,
+  venueName,
+} from "@/lib/site";
 import "./globals.css";
+
+const agenda = agendaData as Agenda;
 
 const inter = Inter({
   subsets: ["latin"],
@@ -8,10 +21,52 @@ const inter = Inter({
   display: "swap",
 });
 
+const description = siteDescription(agenda);
+const dateRange = formatDateRange(agenda);
+
 export const metadata: Metadata = {
-  title: "Event programme — agenda views",
-  description:
-    "Multi-track conference agenda: a desktop time grid and a mobile-first chronological agenda, sharing one data model.",
+  // makes every relative URL below (canonical, OG image) absolute
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: `${eventName} — Programme`,
+    template: `%s — ${eventShortName}`,
+  },
+  description,
+  applicationName: `${eventShortName} Programme`,
+  keywords: [
+    eventName,
+    eventShortName,
+    "AI conference Malaysia",
+    "conference schedule",
+    "event agenda",
+    "Kuala Lumpur tech event",
+    ...agenda.stages.map((s) => s.name),
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: eventName,
+    title: `${eventName} — Programme`,
+    description,
+    url: "/",
+    locale: "en_MY",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${eventName} — Programme`,
+    description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
+  other: {
+    // surfaces the dates to crawlers that read plain meta rather than JSON-LD
+    "event:start_date": agenda.days[0]?.date ?? "",
+    "event:location": `${venueName}, ${venueLocality}`,
+    "event:dates": dateRange,
+  },
 };
 
 export const viewport: Viewport = {

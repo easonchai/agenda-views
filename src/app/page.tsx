@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { AgendaShell } from "@/components/agenda-shell";
+import { EventSchema } from "@/components/event-schema";
 import type { Agenda } from "@/lib/agenda";
 import agendaData from "@/data/agenda.json";
 
@@ -8,10 +9,14 @@ const agenda = agendaData as Agenda;
 
 export default function Home() {
   return (
-    <Suspense fallback={<AgendaSkeleton />}>
-      {/* the skip link in layout.tsx targets this */}
-      <AgendaShell agenda={agenda} mainId="agenda" />
-    </Suspense>
+    <>
+      {/* server-rendered, so crawlers get the programme without running JS */}
+      <EventSchema agenda={agenda} />
+      <Suspense fallback={<AgendaSkeleton />}>
+        {/* the skip link in layout.tsx targets this */}
+        <AgendaShell agenda={agenda} mainId="agenda" />
+      </Suspense>
+    </>
   );
 }
 

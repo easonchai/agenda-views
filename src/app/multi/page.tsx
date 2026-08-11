@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AgendaShell } from "@/components/agenda-shell";
 import type { Agenda } from "@/lib/agenda";
 import agendaData from "@/data/agenda.json";
+
+// a QA fixture that renders the same programme twice — keep it out of the index
+export const metadata: Metadata = {
+  title: "Two-agenda isolation fixture",
+  robots: { index: false, follow: false },
+};
 
 /**
  * Proof that the components carry no global state.
