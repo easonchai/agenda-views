@@ -124,7 +124,7 @@ All controlled — they hold no state of their own.
 | `<LiveBadge>` | — |
 | `<SpeakerAvatar>` | `speaker: Speaker`, `size?: number` |
 | `<SpeakerStack>` | `speakers: Speaker[]`, `max?: number`, `size?: number` |
-| `<GridLegend>` | `hour12: boolean` |
+| `<GridLegend>` | `hour12?: boolean` |
 
 ---
 

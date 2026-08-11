@@ -445,7 +445,12 @@ function GridBlock({
   );
 }
 
-export function GridLegend({ hour12 }: { hour12: boolean }) {
+export type GridLegendProps = {
+  /** 12-hour clock. Default true. */
+  hour12?: boolean;
+};
+
+export function GridLegend({ hour12 = true }: GridLegendProps) {
   return (
     <p className="flex items-center gap-1.5 text-xs text-text-subtle">
       <ClockIcon className="size-3.5" />
