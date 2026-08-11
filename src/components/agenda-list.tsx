@@ -148,12 +148,23 @@ function AgendaRow({
         sessionAccent(session),
       )}
     >
-      <span className="flex flex-wrap items-center gap-1.5">
-        <StageBadge session={session} size="sm" />
-        {session.format && <FormatBadge format={session.format} />}
-        <span className="ml-auto font-mono text-[11px] tabular-nums text-text-subtle">
+      {/*
+        The time is the first thing on the card and the highest-contrast text
+        on it. On the source site the only timestamp lived in a left rail that
+        scrolled away, so people misread when a session actually ran.
+      */}
+      <span className="flex items-baseline gap-2">
+        <span className="font-mono text-[13px] font-bold tabular-nums text-text">
           {formatTime(session.start, hour12)}–{formatTime(session.end, hour12)}
         </span>
+        <span className="font-mono text-[11px] tabular-nums text-text-subtle">
+          {formatDuration(minutes)}
+        </span>
+      </span>
+
+      <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
+        <StageBadge session={session} size="sm" />
+        {session.format && <FormatBadge format={session.format} />}
       </span>
 
       <span className="mt-1.5 block text-[15px] leading-snug font-semibold text-balance text-text">
@@ -172,10 +183,6 @@ function AgendaRow({
       <span className="mt-2 flex items-center gap-1.5 text-xs text-text-subtle">
         <PinIcon className="size-3 shrink-0" />
         <span className="clamp-1">{session.location ?? stage?.venue}</span>
-        <span aria-hidden className="mx-0.5">
-          ·
-        </span>
-        <span className="shrink-0">{formatDuration(minutes)}</span>
       </span>
     </button>
   );

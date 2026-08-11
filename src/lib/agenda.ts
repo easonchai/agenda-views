@@ -216,6 +216,8 @@ export type GridModel = {
   totalMinutes: number;
   /** hour ticks rendered in the time gutter */
   hours: number[];
+  /** half-hour ticks — most sessions here start on :30, not on the hour */
+  halfHours: number[];
   lanes: StageLane[];
   /** plenary rows (LUNCH etc.) drawn as full-width bands */
   fullWidth: PlacedSession[];
@@ -293,6 +295,11 @@ export function buildGrid(list: Session[], visibleStages: Stage[]): GridModel {
   const hours: number[] = [];
   for (let m = Math.ceil(startMinutes / 60) * 60; m <= endMinutes; m += 60) hours.push(m);
 
+  const halfHours: number[] = [];
+  for (let m = Math.ceil(startMinutes / 30) * 30; m <= endMinutes; m += 30) {
+    if (m % 60 !== 0) halfHours.push(m);
+  }
+
   const lanes: StageLane[] = visibleStages.map((stage) => ({
     stage,
     items: packLane(
@@ -316,6 +323,7 @@ export function buildGrid(list: Session[], visibleStages: Stage[]): GridModel {
     endMinutes,
     totalMinutes: endMinutes - startMinutes,
     hours,
+    halfHours,
     lanes,
     fullWidth,
   };

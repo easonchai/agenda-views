@@ -11,6 +11,10 @@ Rebuilt from the [AIMTO 2026 programme](https://aimto.my/program.php) — real d
 
 ![Desktop time grid](docs/desktop-grid.png)
 
+Hovering or focusing a block writes its exact start and end into the time gutter and rules them across every lane, so "when is this, and what runs against it" is answered without opening anything:
+
+![Time bracket on hover](docs/time-bracket.png)
+
 | Mobile agenda | Session detail | Dark + filtered |
 | --- | --- | --- |
 | ![](docs/mobile-agenda.png) | ![](docs/mobile-sheet.png) | ![](docs/dark-list.png) |
@@ -32,7 +36,8 @@ The source page renders the same desktop structure at every width:
 3. **Filters cost three rows.** Five stage pills wrap to three lines instead of scrolling horizontally on one.
 4. **Every card is fully expanded.** Full abstracts inline means ~5 screens of scroll per hour of programme, so scanning is impossible.
 5. **No detail layer.** Because everything is inline, there is nowhere to put speaker bios, and no way to link to a single session.
-6. **No sense of "now".** During the event the most important question is "what is on right now" and the page cannot answer it.
+6. **A session's own time is not on the session.** The only timestamp is in the left rail, it shows the *block's* range rather than each card's, and there are no rules to measure against — so two cards sitting side by side under one rail can run 30 minutes and 3 hours and look identical. This is the failure that actually makes people show up at the wrong time.
+7. **No sense of "now".** During the event the most important question is "what is on right now" and the page cannot answer it.
 
 ## The patterns this implements
 
@@ -44,6 +49,8 @@ Drawn from how Sched, Whova, Swapcard, Google I/O, WWDC, and the native Apple/Go
 - **2.3px per minute.** The smallest scale at which the shortest real session (30 min → 69px) still fits a time row plus a two-line title. Below that, half the programme becomes unidentifiable without clicking.
 - **Progressive density by block height** (`density()` in `track-grid.tsx`) — under 30 min: one title line; 30–45: two lines; 45–60: + speakers; 60+: + location. Content is a function of available height, not a fixed template that overflows.
 - **Overlap packing within a lane.** Sessions that overlap inside one stage are split into side-by-side sub-columns via interval-graph colouring; non-overlapping neighbours reuse the full width. (Day 2 needs this: a 4-hour Learn-a-Thon runs under shorter Sandbox sessions.)
+- **Two rule weights: solid on the hour, dotted on the half.** Most sessions in a conference programme start on `:30`, and with hour-only rules the eye has nothing to measure those top edges against. Half-hour labels render in the gutter too, one step down in size and contrast.
+- **Hover/focus projects a block's span back onto the gutter** — a brand-coloured bar spanning exactly its start→end, its two timestamps written as chips at the edges (replacing the generic ticks there), and dashed guide lines drawn across every lane at both edges. This is what answers "when is this *actually*, and what else runs against it" without opening anything.
 - **Sticky time gutter + sticky stage header**, both pinned inside the grid's own scroll container.
 - **A now-line with the current time in the gutter**, auto-scrolled into view once on the running day. Hour ticks within 18 minutes of it are suppressed rather than overlapped.
 - **Plenary rows span all lanes.** Lunch is not a track — it renders as a full-width band.
@@ -53,7 +60,8 @@ Drawn from how Sched, Whova, Swapcard, Google I/O, WWDC, and the native Apple/Go
 - **Time becomes a sticky rail, not an axis.** Each start-time group gets a pinned header that stays until the next block. Concurrency reads as *"10:30 — 4 in parallel"* instead of as column position.
 - **The sticky region is only the controls.** The title and search scroll away; day tabs + stage chips stay. A full sticky header would consume ~40% of a 390px viewport.
 - **Stage filters scroll horizontally on one line** with snap points, not three wrapped rows.
-- **Cards are scan-sized**: stage, format, time, title, speaker faces, room, duration. The abstract lives in the detail sheet.
+- **Time leads every card, in the highest-contrast type on it** — full `start–end` range plus duration, above the title. On the source site the only timestamp was in a rail that scrolled away, so two cards in the same block reading `12 PM–12:30 PM · 30 min` and `12 PM–1 PM · 1h` were indistinguishable. This is the single change that stops the misread.
+- **Cards are scan-sized**: time, stage, format, title, speaker faces, room. The abstract lives in the detail sheet.
 - **Bottom sheet for detail**, centred dialog on desktop — same component, one breakpoint.
 - **Whole card is the tap target**, always ≥44px.
 
