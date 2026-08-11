@@ -120,7 +120,7 @@ export function TrackGrid({
   return (
     <div
       ref={scrollerRef}
-      className="print-full relative max-h-[calc(100dvh-var(--agenda-sticky-top,4rem)-2rem)] overflow-auto rounded-2xl border border-line bg-surface-raised"
+      className="print-full relative max-h-[calc(100dvh-var(--agenda-sticky-top,4rem)-2rem)] overflow-auto rounded-2xl border border-line bg-surface-raised shadow-(--shadow-card)"
     >
       <div
         className="relative grid"
@@ -137,15 +137,21 @@ export function TrackGrid({
           <div
             key={stage.id}
             className={cx(
-              "sticky top-0 z-20 flex flex-col justify-center border-b border-line bg-surface-raised px-3",
+              // `sticky` already creates the containing block for the accent rule
+              "sticky top-0 z-20 flex flex-col justify-center border-b border-line px-3.5",
+              "bg-linear-to-b from-[var(--accent-tint)] to-surface-raised",
               accentFor(stage.accent),
             )}
             style={{ height: HEADER_HEIGHT }}
           >
+            <span
+              aria-hidden
+              className="absolute inset-x-0 top-0 h-0.5 bg-[var(--accent)]"
+            />
             <span className="flex items-center gap-2 text-sm font-semibold text-text">
               <span
                 aria-hidden
-                className="size-2 shrink-0 rounded-full bg-[var(--accent)]"
+                className="size-2 shrink-0 rounded-full bg-[var(--accent)] ring-3 ring-[var(--accent)]/20"
               />
               <span className="truncate">{stage.name}</span>
             </span>
@@ -212,7 +218,10 @@ export function TrackGrid({
         {grid.lanes.map((lane) => (
           <div
             key={lane.stage.id}
-            className="relative border-r border-line last:border-r-0"
+            className={cx(
+              "relative border-r border-line last:border-r-0",
+              lane.items.length === 0 && "lane-empty",
+            )}
             style={{ height: bodyHeight }}
           >
             <TimeRules grid={grid} pxPerMinute={pxPerMinute} />
@@ -246,7 +255,7 @@ export function TrackGrid({
             <button
               type="button"
               onClick={() => onSelect(item.session)}
-              className="pointer-events-auto flex size-full items-center justify-center gap-3 rounded-lg border border-dashed border-line-strong bg-surface-sunken text-sm font-medium text-text-muted transition hover:border-[var(--color-brand)] hover:text-text"
+              className="lane-empty pointer-events-auto flex size-full items-center justify-center gap-3 rounded-xl border border-dashed border-line-strong bg-surface-sunken/80 text-sm font-semibold tracking-wide text-text-muted transition hover:border-[var(--color-brand)] hover:text-text"
             >
               <span className="tracking-wide uppercase">{item.session.title}</span>
               <span className="font-mono text-xs tabular-nums">
@@ -378,9 +387,10 @@ function GridBlock({
         // buttons vertically centre their content by default, which floats the
         // text in the middle of tall blocks — force top alignment
         "group absolute flex flex-col items-stretch justify-start overflow-hidden",
-        "rounded-lg border border-l-3 px-2 py-1.5 text-left transition",
-        "border-line border-l-[var(--accent)] bg-[var(--accent-tint)]",
-        "hover:z-20 hover:shadow-lg hover:shadow-black/5 focus-visible:z-20",
+        "rounded-xl border border-l-3 px-2.5 py-2 text-left",
+        "border-line/80 border-l-[var(--accent)] accent-wash shadow-(--shadow-card)",
+        "transition duration-150 hover:z-20 hover:-translate-y-px",
+        "hover:border-line-strong hover:shadow-(--shadow-lift) focus-visible:z-20",
         selected && "z-20 ring-2 ring-[var(--color-brand)] ring-offset-1 ring-offset-surface-raised",
         status === "past" && "opacity-55 saturate-50",
         sessionAccent(stageById, session),

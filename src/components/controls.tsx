@@ -47,7 +47,7 @@ export function DayTabs({
       role="tablist"
       aria-label="Select event day"
       onKeyDown={onKeyDown}
-      className="inline-flex rounded-xl bg-surface-sunken p-1"
+      className="inline-flex shrink-0 rounded-2xl bg-surface-sunken p-1.5 ring-1 ring-line/60"
     >
       {days.map((day) => {
         const active = day.id === value;
@@ -61,10 +61,10 @@ export function DayTabs({
             tabIndex={active ? 0 : -1}
             onClick={() => onChange(day.id)}
             className={cx(
-              "h-11 rounded-lg px-4 text-sm font-semibold whitespace-nowrap transition",
+              "h-11 rounded-xl px-4 text-sm font-semibold whitespace-nowrap transition",
               active
-                ? "bg-surface-raised text-text shadow-sm"
-                : "text-text-muted hover:text-text",
+                ? "bg-surface-raised text-text shadow-(--shadow-card) ring-1 ring-line/70"
+                : "text-text-muted hover:bg-surface/60 hover:text-text",
             )}
           >
             {day.label}
@@ -99,17 +99,23 @@ export function StageFilter({
     <div
       role="group"
       aria-label="Filter by stage"
-      className="no-scrollbar -mx-4 flex snap-x gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0"
+      /*
+        `scroll-px-4` is load-bearing, not decoration. With `snap-x` + a
+        `snap-start` child, the browser aligns the first chip to the scrollport
+        edge and scrolls straight past `px-4`, rendering the strip flush at x=0.
+        scroll-padding insets the scrollport so snapping respects the gutter.
+      */
+      className="no-scrollbar -mx-4 flex snap-x scroll-px-4 gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:scroll-px-0 sm:px-0"
     >
       <button
         type="button"
         onClick={() => onChange([])}
         aria-pressed={value.length === 0}
         className={cx(
-          "h-9 shrink-0 snap-start rounded-full border px-3.5 text-[13px] font-medium transition",
+          "h-10 shrink-0 snap-start rounded-full border px-4 text-[13px] font-semibold transition",
           value.length === 0
-            ? "border-text bg-text text-surface"
-            : "border-line text-text-muted hover:border-line-strong hover:text-text",
+            ? "border-text bg-text text-surface shadow-(--shadow-card)"
+            : "border-line text-text-muted hover:border-line-strong hover:bg-surface-sunken hover:text-text",
         )}
       >
         All stages
@@ -124,14 +130,20 @@ export function StageFilter({
             onClick={() => toggle(stage.id)}
             aria-pressed={active}
             className={cx(
-              "flex h-9 shrink-0 snap-start items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-medium transition",
+              "flex h-10 shrink-0 snap-start items-center gap-2 rounded-full border px-4 text-[13px] font-semibold transition",
               accentClass[stage.accent],
               active
-                ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent-text)]"
-                : "border-line text-text-muted hover:border-line-strong hover:text-text",
+                ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent-text)] shadow-(--shadow-card)"
+                : "border-line text-text-muted hover:border-line-strong hover:bg-surface-sunken hover:text-text",
             )}
           >
-            <span aria-hidden className="size-2 rounded-full bg-[var(--accent)]" />
+            <span
+              aria-hidden
+              className={cx(
+                "size-2 rounded-full bg-[var(--accent)] transition",
+                active && "ring-2 ring-[var(--accent)]/30",
+              )}
+            />
             {stage.short}
           </button>
         );
@@ -157,7 +169,7 @@ export function SearchField({
       <label htmlFor={inputId} className="sr-only">
         Search sessions, speakers and stages
       </label>
-      <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-text-subtle" />
+      <SearchIcon className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-text-subtle" />
       <input
         id={inputId}
         type="search"
@@ -166,7 +178,7 @@ export function SearchField({
         value={value}
         placeholder="Search sessions or speakers"
         onChange={(e) => onChange(e.target.value)}
-        className="h-11 w-full rounded-xl border border-line bg-surface-raised pr-9 pl-9 text-sm text-text placeholder:text-text-subtle focus:border-[var(--color-brand)]"
+        className="h-11 w-full rounded-xl border border-line bg-surface-raised pr-10 pl-10 text-sm text-text shadow-(--shadow-card) transition placeholder:text-text-subtle hover:border-line-strong focus:border-[var(--color-brand)]"
       />
       {value && (
         <button
@@ -199,7 +211,7 @@ export function ViewToggle({
     <div
       role="group"
       aria-label="Layout"
-      className="hidden rounded-xl bg-surface-sunken p-1 lg:inline-flex"
+      className="hidden rounded-2xl bg-surface-sunken p-1.5 ring-1 ring-line/60 lg:inline-flex"
     >
       {(["grid", "list"] as const).map((mode) => (
         <button
@@ -208,9 +220,9 @@ export function ViewToggle({
           onClick={() => onChange(mode)}
           aria-pressed={value === mode}
           className={cx(
-            "h-9 rounded-lg px-3 text-[13px] font-semibold capitalize transition",
+            "h-9 rounded-xl px-3.5 text-[13px] font-semibold capitalize transition",
             value === mode
-              ? "bg-surface-raised text-text shadow-sm"
+              ? "bg-surface-raised text-text shadow-(--shadow-card) ring-1 ring-line/70"
               : "text-text-muted hover:text-text",
           )}
         >
@@ -233,7 +245,7 @@ export function ThemeToggle({
       type="button"
       onClick={() => onChange(theme === "dark" ? "light" : "dark")}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-      className="grid size-11 shrink-0 place-items-center rounded-xl border border-line text-text-muted transition hover:text-text"
+      className="grid size-11 shrink-0 place-items-center rounded-2xl border border-line bg-surface-raised text-text-muted shadow-(--shadow-card) transition hover:border-line-strong hover:text-text"
     >
       {theme === "dark" ? (
         <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden className="size-4">

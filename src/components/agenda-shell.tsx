@@ -189,15 +189,34 @@ function AgendaShellInner({
   return (
     <div ref={rootRef} className="min-h-dvh bg-surface">
       {/* --------------------------------------------------- masthead (scrolls) */}
-      <header className="print-hide mx-auto max-w-[1400px] px-4 pt-4 pb-3 sm:px-6">
+      <header className="print-hide masthead-bloom border-b border-line/60">
+        <div className="mx-auto max-w-[1400px] px-5 pt-6 pb-4 sm:px-8 sm:pt-8">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-xl font-bold tracking-tight text-text sm:text-2xl">
+            <p className="text-[11px] font-semibold tracking-[0.18em] text-text-subtle uppercase">
+              {index.agenda.days.length} days · {stages.length} stages ·{" "}
+              {sessions.length} sessions
+            </p>
+            <h1 className="mt-1.5 text-2xl leading-[1.05] font-bold tracking-[-0.02em] text-balance text-text sm:text-4xl">
               Event programme
             </h1>
-            <p className="mt-0.5 truncate text-sm text-text-muted">
-              {day.weekday} {day.short} · {visible.length} of {counts[dayId]} sessions
-              {stageIds.length > 0 && " · filtered"}
+            <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-muted">
+              <span className="font-medium text-text">
+                {day.weekday} {day.short}
+              </span>
+              <span aria-hidden className="text-text-subtle">
+                ·
+              </span>
+              <span>
+                {visible.length === counts[dayId]
+                  ? `${counts[dayId]} sessions`
+                  : `${visible.length} of ${counts[dayId]} sessions`}
+              </span>
+              {stageIds.length > 0 && (
+                <span className="rounded-full bg-surface-sunken px-2 py-0.5 text-[11px] font-semibold text-text-muted">
+                  filtered
+                </span>
+              )}
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -206,8 +225,9 @@ function AgendaShellInner({
           </div>
         </div>
 
-        <div className="mt-3 sm:max-w-xs">
+        <div className="mt-5 sm:max-w-xs">
           <SearchField value={query} onChange={setQuery} resultCount={visible.length} />
+        </div>
         </div>
       </header>
 
@@ -218,9 +238,9 @@ function AgendaShellInner({
       */}
       <div
         ref={headerRef}
-        className="print-hide sticky top-0 z-40 border-b border-line bg-surface/88 py-2 backdrop-blur-lg"
+        className="print-hide sticky top-0 z-40 border-b border-line bg-surface/85 py-3 backdrop-blur-xl"
       >
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-4 sm:flex-row sm:items-center sm:gap-4 sm:px-6">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-5 sm:flex-row sm:items-center sm:gap-4 sm:px-8">
           <div className="flex items-center gap-2">
             <DayTabs
               days={days}
@@ -238,7 +258,7 @@ function AgendaShellInner({
       </div>
 
       {/* -------------------------------------------------------------- body */}
-      <main id={mainId} className="mx-auto max-w-[1400px] px-4 py-4 sm:px-6">
+      <main id={mainId} className="mx-auto max-w-[1400px] px-5 py-5 sm:px-8 sm:py-6">
         <div
           role="tabpanel"
           id={`${uid}panel-${dayId}`}
@@ -303,9 +323,12 @@ function JumpToNowButton({ anchorId }: { anchorId: string }) {
           .getElementById(anchorId)
           ?.scrollIntoView({ block: "center", behavior: "smooth" })
       }
-      className="flex h-11 shrink-0 items-center gap-1.5 rounded-xl border border-line px-3 text-[13px] font-semibold text-text-muted transition hover:text-text"
+      className="flex h-11 shrink-0 items-center gap-2 rounded-2xl border border-line bg-surface-raised px-3.5 text-[13px] font-semibold text-text-muted shadow-(--shadow-card) transition hover:border-line-strong hover:text-text"
     >
-      <span aria-hidden className="size-2 rounded-full bg-[var(--color-live)]" />
+      <span
+        aria-hidden
+        className="size-2 rounded-full bg-[var(--color-live)] ring-3 ring-[var(--color-live)]/20"
+      />
       Now
     </button>
   );
@@ -313,14 +336,14 @@ function JumpToNowButton({ anchorId }: { anchorId: string }) {
 
 function EmptyState({ query, onReset }: { query: string; onReset: () => void }) {
   return (
-    <div className="rounded-2xl border border-dashed border-line-strong px-6 py-16 text-center">
+    <div className="lane-empty rounded-2xl border border-dashed border-line-strong px-6 py-20 text-center">
       <p className="text-sm font-medium text-text">
         {query ? `No sessions match “${query}”.` : "No sessions match these filters."}
       </p>
       <button
         type="button"
         onClick={onReset}
-        className="mt-3 h-11 rounded-xl border border-line px-4 text-sm font-semibold text-text transition hover:bg-surface-sunken"
+        className="mt-4 h-11 rounded-xl border border-line bg-surface-raised px-5 text-sm font-semibold text-text shadow-(--shadow-card) transition hover:border-line-strong hover:bg-surface-sunken"
       >
         Clear filters
       </button>

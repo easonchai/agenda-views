@@ -83,7 +83,7 @@ export function AgendaList({
             <div
               ref={anyLive ? liveRef : undefined}
               id={anyLive ? nowAnchorId : undefined}
-              className="sticky top-[var(--agenda-sticky-top,0px)] z-10 -mx-4 flex items-center gap-3 scroll-mt-[calc(var(--agenda-sticky-top,0px)+1rem)] bg-surface/92 px-4 py-2 backdrop-blur-md"
+              className="sticky top-[var(--agenda-sticky-top,0px)] z-10 -mx-5 flex items-center gap-3 scroll-mt-[calc(var(--agenda-sticky-top,0px)+1rem)] bg-surface/92 px-5 py-2.5 backdrop-blur-md"
             >
               <span className="font-mono text-sm font-semibold tabular-nums text-text">
                 {formatTime(group.start, hour12)}
@@ -97,7 +97,7 @@ export function AgendaList({
               {anyLive && nowMinutes !== null && <LiveBadge />}
             </div>
 
-            <ul className="space-y-2 pt-1 pb-4">
+            <ul className="space-y-2.5 pt-2 pb-5">
               {group.sessions.map((session) => (
                 <li key={session.id}>
                   <AgendaRow
@@ -136,7 +136,7 @@ function AgendaRow({
       <button
         type="button"
         onClick={() => onSelect(session)}
-        className="flex min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-dashed border-line-strong bg-surface-sunken px-4 py-3 text-sm font-medium tracking-wide text-text-muted uppercase transition active:scale-[0.99]"
+        className="lane-empty flex min-h-12 w-full items-center justify-center gap-3 rounded-2xl border border-dashed border-line-strong bg-surface-sunken/80 px-4 py-3.5 text-sm font-semibold tracking-wide text-text-muted uppercase transition active:scale-[0.99]"
       >
         {session.title}
         <span className="font-mono text-xs normal-case tabular-nums">
@@ -152,8 +152,9 @@ function AgendaRow({
       onClick={() => onSelect(session)}
       className={cx(
         // 44px minimum target; the whole row is the target, not just the title
-        "block w-full rounded-xl border border-line border-l-3 border-l-[var(--accent)]",
-        "bg-surface-raised p-3 text-left transition active:scale-[0.99]",
+        "block w-full rounded-2xl border border-line/80 border-l-3 border-l-[var(--accent)]",
+        "accent-wash p-4 text-left shadow-(--shadow-card) transition",
+        "active:scale-[0.99] sm:hover:-translate-y-px sm:hover:shadow-(--shadow-lift)",
         status === "past" && "opacity-60",
         sessionAccent(stageById, session),
       )}

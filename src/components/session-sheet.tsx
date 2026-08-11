@@ -9,6 +9,13 @@ import {
   formatRange,
   sessionStatus,
 } from "@/lib/agenda";
+import {
+  buildIcs,
+  calendarAriaLabel,
+  downloadIcs,
+  googleCalendarUrl,
+  icsFilename,
+} from "@/lib/calendar";
 import { useScrollLock } from "@/lib/hooks";
 import {
   ClockIcon,
@@ -211,8 +218,29 @@ export function SessionSheet({ session, now, onClose, hour12 }: Props) {
           )}
         </div>
 
-        <div className="border-t border-line px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          <CopyLinkButton sessionId={session.id} />
+        <div className="grid gap-2 border-t border-line bg-surface-sunken/50 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <a
+            href={googleCalendarUrl(index, session)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={calendarAriaLabel(session, hour12)}
+            className="flex h-12 w-full items-center justify-center gap-2.5 rounded-xl bg-[var(--color-brand)] text-sm font-semibold text-white shadow-(--shadow-card) transition hover:opacity-90 active:scale-[0.99]"
+          >
+            <GoogleCalendarIcon className="size-4" />
+            Add to Google Calendar
+          </a>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => downloadIcs(icsFilename(session), buildIcs(index, [session]))}
+              className="flex h-11 items-center justify-center gap-2 rounded-xl border border-line bg-surface-raised text-[13px] font-semibold text-text-muted transition hover:border-line-strong hover:text-text active:scale-[0.99]"
+            >
+              <DownloadIcon className="size-3.5" />
+              Apple / .ics
+            </button>
+            <CopyLinkButton sessionId={session.id} />
+          </div>
         </div>
       </div>
     </div>
@@ -236,9 +264,79 @@ function CopyLinkButton({ sessionId }: { sessionId: string }) {
           window.prompt("Copy this link", url.toString());
         }
       }}
-      className="h-11 w-full rounded-xl bg-[var(--color-brand)] text-sm font-semibold text-white transition hover:opacity-90 active:scale-[0.99]"
+      className="flex h-11 items-center justify-center gap-2 rounded-xl border border-line bg-surface-raised text-[13px] font-semibold text-text-muted transition hover:border-line-strong hover:text-text active:scale-[0.99]"
     >
-      {copied ? "Link copied" : "Copy link to session"}
+      <LinkIcon className="size-3.5" />
+      {copied ? "Copied" : "Copy link"}
     </button>
+  );
+}
+
+/* ----------------------------------------------------------------- icons */
+
+function GoogleCalendarIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
+      <rect
+        x="3"
+        y="4.5"
+        width="18"
+        height="16"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M3 9.5h18M8 3v3M16 3v3"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="m9.5 14.5 1.8 1.8 3.7-3.7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function DownloadIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden
+      className={className}
+    >
+      <path d="M8 2v8m0 0L5 7m3 3 3-3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2.5 11v1.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V11" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LinkIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden
+      className={className}
+    >
+      <path
+        d="M6.5 9.5a2.5 2.5 0 0 0 3.5 0l2-2a2.475 2.475 0 0 0-3.5-3.5l-.5.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M9.5 6.5a2.5 2.5 0 0 0-3.5 0l-2 2a2.475 2.475 0 0 0 3.5 3.5l.5-.5"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
