@@ -4,11 +4,16 @@ import type { Agenda } from "./agenda";
  * Single source of truth for anything that needs an absolute URL: metadataBase,
  * canonical links, OG tags, sitemap and JSON-LD.
  */
-export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "https://aimto-agenda.vercel.app");
+/**
+ * Deliberately NOT derived from `VERCEL_PROJECT_PRODUCTION_URL`. After the
+ * project was renamed, Vercel still reported the original auto-domain there,
+ * which put a cross-domain canonical on every page — telling Google to index
+ * the old URL instead. An explicit constant is the only reliable answer;
+ * NEXT_PUBLIC_SITE_URL overrides it for previews or a custom domain.
+ */
+export const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://aimto-agenda.vercel.app"
+).replace(/\/$/, "");
 
 export const eventName = "AI Malaysia Takeover 2026";
 export const eventShortName = "AIMTO_26";
