@@ -1,26 +1,241 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  /* neutral ramp — warm-cool grey, reads well in both themes */
+  --color-ink-50: oklch(0.985 0.002 275);
+  --color-ink-100: oklch(0.968 0.003 275);
+  --color-ink-200: oklch(0.925 0.005 275);
+  --color-ink-300: oklch(0.868 0.008 275);
+  --color-ink-400: oklch(0.702 0.012 275);
+  --color-ink-500: oklch(0.565 0.014 275);
+  --color-ink-600: oklch(0.452 0.016 275);
+  --color-ink-700: oklch(0.362 0.018 275);
+  --color-ink-800: oklch(0.262 0.018 275);
+  --color-ink-900: oklch(0.192 0.016 275);
+  --color-ink-950: oklch(0.138 0.014 275);
+
+  --color-brand: oklch(0.58 0.19 285);
+  --color-live: oklch(0.62 0.21 25);
+
+  /* grid geometry — one place to retune density */
+  --agenda-px-per-minute: 1.6px;
+  --agenda-gutter: 76px;
+  --agenda-lane-min: 220px;
+  --agenda-header-h: 56px;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --surface: var(--color-white);
+  --surface-raised: var(--color-white);
+  --surface-sunken: var(--color-ink-50);
+  --line: var(--color-ink-200);
+  --line-strong: var(--color-ink-300);
+  --text: var(--color-ink-950);
+  --text-muted: var(--color-ink-500);
+  --text-subtle: var(--color-ink-400);
+
+  /* stage accents: [line, tint, text] tuned so text-on-tint clears 4.5:1 */
+  --accent-amber: oklch(0.72 0.16 62);
+  --accent-amber-tint: oklch(0.96 0.04 75);
+  --accent-amber-text: oklch(0.45 0.12 55);
+
+  --accent-emerald: oklch(0.68 0.14 162);
+  --accent-emerald-tint: oklch(0.96 0.04 165);
+  --accent-emerald-text: oklch(0.42 0.1 162);
+
+  --accent-violet: oklch(0.62 0.18 295);
+  --accent-violet-tint: oklch(0.96 0.03 295);
+  --accent-violet-text: oklch(0.45 0.16 295);
+
+  --accent-sky: oklch(0.68 0.13 230);
+  --accent-sky-tint: oklch(0.96 0.035 230);
+  --accent-sky-text: oklch(0.44 0.11 235);
+}
+
+.dark {
+  --surface: var(--color-ink-950);
+  --surface-raised: var(--color-ink-900);
+  --surface-sunken: oklch(0.115 0.014 275);
+  --line: oklch(0.28 0.014 275);
+  --line-strong: oklch(0.36 0.016 275);
+  --text: var(--color-ink-50);
+  --text-muted: var(--color-ink-400);
+  --text-subtle: var(--color-ink-500);
+
+  --accent-amber-tint: oklch(0.3 0.06 62);
+  --accent-amber-text: oklch(0.85 0.1 70);
+  --accent-emerald-tint: oklch(0.28 0.05 162);
+  --accent-emerald-text: oklch(0.84 0.11 165);
+  --accent-violet-tint: oklch(0.3 0.07 295);
+  --accent-violet-text: oklch(0.85 0.1 295);
+  --accent-sky-tint: oklch(0.29 0.06 230);
+  --accent-sky-text: oklch(0.85 0.09 230);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    /* stop iOS rubber-band from detaching sticky headers */
+    overscroll-behavior-y: none;
+  }
+
+  /* visible, consistent focus ring everywhere — never remove it */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--color-brand) 25%, transparent);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* per-session accent, driven by an inline --accent-* set on the element */
+  .accent-amber {
+    --accent: var(--accent-amber);
+    --accent-tint: var(--accent-amber-tint);
+    --accent-text: var(--accent-amber-text);
+  }
+  .accent-emerald {
+    --accent: var(--accent-emerald);
+    --accent-tint: var(--accent-emerald-tint);
+    --accent-text: var(--accent-emerald-text);
+  }
+  .accent-violet {
+    --accent: var(--accent-violet);
+    --accent-tint: var(--accent-violet-tint);
+    --accent-text: var(--accent-violet-text);
+  }
+  .accent-sky {
+    --accent: var(--accent-sky);
+    --accent-tint: var(--accent-sky-tint);
+    --accent-text: var(--accent-sky-text);
+  }
+  .accent-neutral {
+    --accent: var(--line-strong);
+    --accent-tint: var(--surface-sunken);
+    --accent-text: var(--text-muted);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* clamp helpers used by grid blocks that must not overflow their slot */
+  .clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(6%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
+
+.animate-sheet-in {
+  animation: sheet-in 220ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.animate-fade-in {
+  animation: fade-in 160ms ease-out;
+}
+.animate-live-pulse {
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+  .print-full {
+    height: auto !important;
+    position: static !important;
+    overflow: visible !important;
+  }
 }

@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Agenda views
 
-## Getting Started
+Two views over one multi-track conference programme:
 
-First, run the development server:
+| Viewport | View | Why |
+| --- | --- | --- |
+| ≥1024px | **Time grid** — columns = stages, rows = time, blocks sized by duration | Concurrency is the question a desktop reader is asking: "what else is on at 11:30?" A grid answers it geometrically. |
+| <1024px | **Agenda** — one chronological column, sticky time rails, parallel sessions grouped | Four lanes in 390px means either horizontal scroll (hides tracks) or 60px columns (truncates every title). Neither is usable. |
+
+Rebuilt from the [AIMTO 2026 programme](https://aimto.my/program.php) — real data, 49 sessions, 2 days, 4 stages, overlapping and non-aligned session times.
+
+![Desktop time grid](docs/desktop-grid.png)
+
+| Mobile agenda | Session detail | Dark + filtered |
+| --- | --- | --- |
+| ![](docs/mobile-agenda.png) | ![](docs/mobile-sheet.png) | ![](docs/dark-list.png) |
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev            # http://localhost:3000
+pnpm build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What the original does badly on mobile
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The source page renders the same desktop structure at every width:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **The time gutter never collapses.** ~100px of a 390px screen is permanently spent on a column of timestamps that repeat down the page.
+2. **Nothing sticks.** Scroll three sessions in and you no longer know what time you are looking at, which day you picked, or which stage filter is active.
+3. **Filters cost three rows.** Five stage pills wrap to three lines instead of scrolling horizontally on one.
+4. **Every card is fully expanded.** Full abstracts inline means ~5 screens of scroll per hour of programme, so scanning is impossible.
+5. **No detail layer.** Because everything is inline, there is nowhere to put speaker bios, and no way to link to a single session.
+6. **No sense of "now".** During the event the most important question is "what is on right now" and the page cannot answer it.
 
-## Learn More
+## The patterns this implements
 
-To learn more about Next.js, take a look at the following resources:
+Drawn from how Sched, Whova, Swapcard, Google I/O, WWDC, and the native Apple/Google Calendar day views handle the same problem.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Desktop time grid
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Absolute positioning, not CSS grid rows.** Sessions here start at 10:30 and end at 11:00 *or* 11:30 — they do not share a row unit. A row-based grid forces everything onto the coarsest common boundary and destroys the actual shape of the day. Blocks are placed at `offsetMinutes × pxPerMinute`.
+- **2.3px per minute.** The smallest scale at which the shortest real session (30 min → 69px) still fits a time row plus a two-line title. Below that, half the programme becomes unidentifiable without clicking.
+- **Progressive density by block height** (`density()` in `track-grid.tsx`) — under 30 min: one title line; 30–45: two lines; 45–60: + speakers; 60+: + location. Content is a function of available height, not a fixed template that overflows.
+- **Overlap packing within a lane.** Sessions that overlap inside one stage are split into side-by-side sub-columns via interval-graph colouring; non-overlapping neighbours reuse the full width. (Day 2 needs this: a 4-hour Learn-a-Thon runs under shorter Sandbox sessions.)
+- **Sticky time gutter + sticky stage header**, both pinned inside the grid's own scroll container.
+- **A now-line with the current time in the gutter**, auto-scrolled into view once on the running day. Hour ticks within 18 minutes of it are suppressed rather than overlapped.
+- **Plenary rows span all lanes.** Lunch is not a track — it renders as a full-width band.
 
-## Deploy on Vercel
+### Mobile agenda
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Time becomes a sticky rail, not an axis.** Each start-time group gets a pinned header that stays until the next block. Concurrency reads as *"10:30 — 4 in parallel"* instead of as column position.
+- **The sticky region is only the controls.** The title and search scroll away; day tabs + stage chips stay. A full sticky header would consume ~40% of a 390px viewport.
+- **Stage filters scroll horizontally on one line** with snap points, not three wrapped rows.
+- **Cards are scan-sized**: stage, format, time, title, speaker faces, room, duration. The abstract lives in the detail sheet.
+- **Bottom sheet for detail**, centred dialog on desktop — same component, one breakpoint.
+- **Whole card is the tap target**, always ≥44px.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Shared
+
+- Deep-linkable state: `?day=&stage=a,b&q=&view=&session=`. A `?session=` link opens the sheet on the right day. Written with `replaceState`, so Back leaves the page instead of stepping through every filter change.
+- One shared clock ticking on minute boundaries via `useSyncExternalStore` — N components, one timer. Live/past/upcoming status and the now-line derive from it.
+- Event time is treated as fixed wall-clock at GMT+8, converted from the visitor's real clock. A visitor in London sees the correct sessions marked live.
+
+### Accessibility
+
+- Day switcher is a real WAI-ARIA tablist: roving `tabindex`, arrow keys, Home/End; Tab exits the group.
+- Stage filters are toggle buttons with `aria-pressed` — they are multi-select, so tabs/radios would be the wrong role.
+- The time grid conveys time through geometry, which a screen reader cannot follow, so it is mirrored by a visually-hidden ordered list in reading order.
+- The sheet is a genuine modal: focus trapped, Escape closes, background scroll locked, focus restored to the trigger.
+- Search results announced via `aria-live="polite"`.
+- Visible focus rings everywhere; `prefers-reduced-motion` collapses all animation; pinch-zoom left enabled (`maximumScale: 5`).
+- Stage colours never carry meaning alone — every block also states its stage in text.
+
+## Structure
+
+```
+src/
+  data/agenda.json          49 sessions, 2 days, 4 stages
+  lib/agenda.ts             types, time math, filtering, grid packing
+  lib/hooks.ts              media query, shared clock, scroll lock
+  components/
+    agenda-shell.tsx        state, URL sync, view switching
+    track-grid.tsx          desktop time grid
+    agenda-list.tsx         mobile chronological agenda
+    session-sheet.tsx       bottom sheet / dialog
+    controls.tsx            day tabs, stage chips, search, toggles
+    primitives.tsx          badges, avatars, icons
+scripts/
+  agenda-scraped.json       raw DOM extraction from aimto.my
+  transform_agenda.py       scraped -> src/data/agenda.json
+```
+
+### Using your own data
+
+Replace `src/data/agenda.json`. The shape is in `src/lib/agenda.ts`:
+
+```ts
+type Session = {
+  id: string
+  day: string            // matches a Day.id
+  start: string          // "HH:MM" wall clock, event timezone
+  end: string
+  stageId: string | null // null = plenary, spans all stages
+  allStages: boolean
+  format: string | null  // PANEL, KEYNOTE, WORKSHOP …
+  title: string
+  description: string | null
+  location: string | null
+  speakers: { name: string; org: string; avatar: string | null }[]
+}
+```
+
+Grid geometry lives in `--agenda-px-per-minute`, `--agenda-gutter`, and `--agenda-lane-min` in `globals.css`; stage accents are the `--accent-*` triples (line / tint / text), tuned so text-on-tint clears 4.5:1 in both themes.
+
+## Why not FullCalendar / react-big-calendar / Schedule-X
+
+They are *editable calendar* libraries: drag-resize, recurrence, event sources, timezone plugins, view state machines. A conference programme is a static, read-only, four-column artefact. Those libraries add 100–300kB to fight their own defaults, and none of them ship a good mobile agenda — you end up writing the mobile view by hand anyway. The whole layout engine here is ~80 lines (`packLane` + `buildGrid`).
+
+## References
+
+- [Building a Conference Schedule with CSS Grid — CSS-Tricks](https://css-tricks.com/building-a-conference-schedule-with-css-grid/)
+- [Calendar View Pattern — UX Patterns for Developers](https://uxpatterns.dev/patterns/data-display/calendar)
+- [Calendar UI Examples + UX tips — Eleken](https://www.eleken.co/blog-posts/calendar-ui)
+- [Best practices for calendar design — Bootcamp](https://medium.com/design-bootcamp/best-practices-for-calendar-design-fix-ux-dc57b62d9bb7)

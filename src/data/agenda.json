@@ -1,0 +1,977 @@
+{
+  "days": [
+    {
+      "id": "day-1",
+      "date": "2026-08-11",
+      "label": "Day 1",
+      "short": "11 Aug",
+      "weekday": "Tuesday"
+    },
+    {
+      "id": "day-2",
+      "date": "2026-08-12",
+      "label": "Day 2",
+      "short": "12 Aug",
+      "weekday": "Wednesday"
+    }
+  ],
+  "stages": [
+    {
+      "id": "war-room",
+      "name": "War Room",
+      "short": "War Room",
+      "venue": "Robert's Theatre, Ground Floor",
+      "accent": "amber"
+    },
+    {
+      "id": "sandbox",
+      "name": "Sandbox",
+      "short": "Sandbox",
+      "venue": "Assembly Hall, Ground Floor",
+      "accent": "emerald"
+    },
+    {
+      "id": "pasar-ai",
+      "name": "Pasar AI",
+      "short": "Pasar AI",
+      "venue": "Champion's Court, Ground Floor",
+      "accent": "violet"
+    },
+    {
+      "id": "masterclass",
+      "name": "Masterclass & Workshop",
+      "short": "Masterclass",
+      "venue": "Padang Teduh, Lower Ground Floor",
+      "accent": "sky"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "day-1-registration-networking",
+      "day": "day-1",
+      "start": "09:00",
+      "end": "10:30",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": null,
+      "title": "REGISTRATION & NETWORKING",
+      "description": null,
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-1-registration-networking-2",
+      "day": "day-1",
+      "start": "09:00",
+      "end": "10:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "REGISTRATION & NETWORKING",
+      "description": null,
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-1-booth-preparation",
+      "day": "day-1",
+      "start": "09:00",
+      "end": "10:30",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": null,
+      "title": "BOOTH PREPARATION",
+      "description": null,
+      "location": "Champion's Court, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-1-registration-networking-3",
+      "day": "day-1",
+      "start": "09:00",
+      "end": "10:30",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": null,
+      "title": "REGISTRATION & NETWORKING",
+      "description": null,
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-1-ai-nation-malaysia-s-window-to-lead",
+      "day": "day-1",
+      "start": "10:30",
+      "end": "11:00",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "PANEL",
+      "title": "AI Nation: Malaysia's Window to Lead",
+      "description": "A scene-setting panel on what it would actually mean for Malaysia to become an AI nation. Rather than speaking broadly about global trends, this session examines Malaysia's practical strengths — its regional position, multilingual population, entrepreneurial base, and growing public-private momentum — and asks what it will take to turn AI enthusiasm into real execution, capability, and long-term advantage.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Dr. Rainer Deutschmann",
+          "org": "Axiata",
+          "avatar": "https://cdn.aimto.my/images/speakers/14.Rainer-Deutschmann.jpg"
+        },
+        {
+          "name": "Amir Zakwan Anuar",
+          "org": "500 Global",
+          "avatar": "https://cdn.aimto.my/images/speakers/24.Amir-Zakwan-Anuar.jpg"
+        },
+        {
+          "name": "Adrian Marcellus",
+          "org": "CEO, MyDIGITAL",
+          "avatar": "https://cdn.aimto.my/images/speakers/Adrian-Marcellus.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-why-entertainment-makes-ai-products-defensible",
+      "day": "day-1",
+      "start": "10:30",
+      "end": "11:00",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": "SHOWCASE",
+      "title": "Why Entertainment Makes AI Products Defensible",
+      "description": "A strategic showcase on why the hardest-to-copy AI products are not defined by model access alone, but by how well they win attention, shape behavior, and stay memorable in crowded markets. Through examples across products and user experiences, the session explores how entertainment value can strengthen engagement, differentiation, and long-term product advantage.",
+      "location": "Champion's Court, Ground Floor",
+      "speakers": [
+        {
+          "name": "Manny Vertiz",
+          "org": "CEO, Ticlio",
+          "avatar": "https://cdn.aimto.my/images/speakers/Manny-Vertiz.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-plan-build-defend",
+      "day": "day-1",
+      "start": "10:30",
+      "end": "11:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": "LIVE CHALLENGE",
+      "title": "Plan, Build, Defend",
+      "description": "Builders tackle the same messy Malaysian problem in three stages: first, they decide what is actually worth solving; next, they build a usable solution under time pressure; finally, they defend their choices in front of judges. The session is designed to test product judgment, execution speed, and the ability to build something useful—not just impressive.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": [
+        {
+          "name": "Khalil Nooh",
+          "org": "The Future Is Solo",
+          "avatar": "https://cdn.aimto.my/images/speakers/05-Khalil-Nooh.jpg"
+        },
+        {
+          "name": "Danial",
+          "org": "KrackedDev",
+          "avatar": "https://cdn.aimto.my/images/speakers/06-Danial-Alias.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-the-ai-powered-sme-work-smarter-grow-faster",
+      "day": "day-1",
+      "start": "10:30",
+      "end": "11:30",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": "WORKSHOP",
+      "title": "The AI-Powered SME: Work Smarter. Grow Faster.",
+      "description": "You don't need a huge team or a huge budget to build a successful business today. You need to know how to put AI to work where it matters most. In this practical session, follow a fictional SME as it uses AI across four critical stages of growth to move faster, make better decisions, and do more with less. Research — uncover trends, track competitors, spot SEO wins, and generate content ideas Build — create ads, landing pages, prototypes, and branded content in less time Measure — connect AI to marketing and business data to surface insights that matter Scale — turn what works into repeatable Skills, systems, and team workflows",
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": [
+        {
+          "name": "KhaiYong",
+          "org": "Growth PJ",
+          "avatar": "https://cdn.aimto.my/images/speakers/30-KhaiYong.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-the-10-trillion-ai-opportunity-what-enterprises",
+      "day": "day-1",
+      "start": "11:00",
+      "end": "11:30",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "FIRESIDE",
+      "title": "The $10 Trillion AI Opportunity: What Enterprises Will Actually Pay For",
+      "description": "AI won't just disrupt software. It will reshape the trillions of dollars enterprises spend every year on professional services. As consulting, tax, cyber, finance and operations evolve, a new generation of AI companies is emerging, not by building better models, but by delivering better business outcomes. Faster decisions. Lower costs. Reduced risk. Smarter workflows. Join this conversation to explore where the biggest commercial opportunities lie, how enterprise buyers evaluate AI, what makes an enterprise AI company defensible, and why the next category-defining businesses will be built around trust, domain expertise and measurable outcomes rather than technology alone.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Vishy Narayanan",
+          "org": "PwC",
+          "avatar": "https://cdn.aimto.my/images/speakers/26.Vishy-Narayanan.jpg"
+        },
+        {
+          "name": "Lee Kai Wen",
+          "org": "Gamuda Technologies",
+          "avatar": "https://cdn.aimto.my/images/speakers/39-Lee-Kai-Wen.jpg"
+        },
+        {
+          "name": "Joel Neoh",
+          "org": "Founding Partner, Firstmove",
+          "avatar": "https://cdn.aimto.my/images/speakers/16.Joel-Noeh.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-should-malaysia-copy-silicon-valley-to-win-ai",
+      "day": "day-1",
+      "start": "11:00",
+      "end": "12:00",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": "PODCAST",
+      "title": "Should Malaysia Copy Silicon Valley to Win AI?",
+      "description": "Malaysia is often told to \"build the next Silicon Valley\" — but strong universities, active VCs, and startup ambition are only part of the equation. This session asks what the US model gets right, why it cannot be copied wholesale, and what Malaysia must solve differently in talent, capital, and corporate adoption.",
+      "location": "Champion's Court, Ground Floor",
+      "speakers": [
+        {
+          "name": "Zubin Rada Krishnan",
+          "org": "Partner, Hive Global AI",
+          "avatar": "https://cdn.aimto.my/images/speakers/29-Zubin-Rada-Krishnan.jpg"
+        },
+        {
+          "name": "Syed Haizam Jamalullail",
+          "org": "Partner, Hive Global AI",
+          "avatar": null
+        },
+        {
+          "name": "Kamesh Raghavendra",
+          "org": "Partner, Hive Global AI",
+          "avatar": "https://cdn.aimto.my/images/speakers/Kamesh-Raghavendra.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-the-long-way-round-what-is-worth-forming-when-ai",
+      "day": "day-1",
+      "start": "11:30",
+      "end": "12:00",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "KEYNOTE",
+      "title": "The Long Way Round: What Is Worth Forming When AI Has the Answer?",
+      "description": "Nobody quite knows how much AI an eight-year-old should be using. That uncertainty opens onto much larger questions: what it means to know something, what intelligence actually is, and what we are educating a person for once the machine can supply the answers. This talk follows that escalation from a parental worry to questions that technology may sharpen, but cannot answer without an account of what a human being is for.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Shahril Hamdan",
+          "org": "Keris & Silicon, Podcast",
+          "avatar": "https://cdn.aimto.my/images/speakers/04-Shahril-Hamdan.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-the-ai-model-olympics-25-ai-models-put-to-the-te",
+      "day": "day-1",
+      "start": "11:30",
+      "end": "12:00",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "The AI Model Olympics: 25 AI models put to the test. Who wins?",
+      "description": "Everyone knows ChatGPT and Claude, but there's a whole universe of models out there. But how do you choose which model to use, and which one is the best? In this session, Ashvin puts 25+ AI models to the test with live challenges (Basic vs Frontier, Claude vs ChatGPT, Gemini vs Deepseek, Open vs Closed); where you can choose your winners, understand the tradeoffs and become a better AI builder.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": [
+        {
+          "name": "Ashvin Praveen",
+          "org": "Cleve AI",
+          "avatar": "https://cdn.aimto.my/images/speakers/08.Ashvin.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-work-while-you-sleep-production-grade-developmen",
+      "day": "day-1",
+      "start": "11:30",
+      "end": "12:00",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": "MASTERCLASS",
+      "title": "Work While You Sleep; Production Grade Development Cycle",
+      "description": "A high-speed masterclass on how top engineering teams are using AI to ship faster, tighten feedback loops, and keep product work moving even when the team is offline. Focused on real production environments, the session looks at how to turn AI from a coding assistant into a serious development advantage — helping teams build with more speed, consistency, and scale.",
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": [
+        {
+          "name": "Raunak Kathuria",
+          "org": "Deriv, Vice President Of Engineering",
+          "avatar": "https://cdn.aimto.my/images/speakers/Raunak-Kathuria.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-smes-don-t-need-ai-magic-they-need-ai-that-works",
+      "day": "day-1",
+      "start": "12:00",
+      "end": "12:30",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "FIRESIDE",
+      "title": "SMEs Don't Need AI Magic. They Need AI That Works.",
+      "description": "A practical discussion on the first layer of AI value for SMEs in Malaysia. Instead of advanced transformation talk, this session focuses on what smaller businesses actually need first: workflow simplification, lower admin burden, better customer response, and tools that are affordable, understandable, and fast to implement.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Yuki AIZAWA",
+          "org": "Women in Tech, APAC Director",
+          "avatar": "https://cdn.aimto.my/images/speakers/Yuki-AIZAWA.jpg"
+        },
+        {
+          "name": "Mariel Asami Fukase",
+          "org": "RoboFounders",
+          "avatar": "https://cdn.aimto.my/images/speakers/19.Mariel-Asami-Fukase.jpg"
+        },
+        {
+          "name": "Firuz Alimov",
+          "org": "The AI Collective",
+          "avatar": "https://cdn.aimto.my/images/speakers/36-Firuz-Alimov.jpg"
+        },
+        {
+          "name": "Adele HOE",
+          "org": "Solution Engineering Director, Microsoft",
+          "avatar": "https://cdn.aimto.my/images/speakers/Adele-HOE.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-the-ai-talent-advantage-future-proofing-malaysia",
+      "day": "day-1",
+      "start": "12:00",
+      "end": "12:30",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": "SHOWCASE",
+      "title": "The AI Talent Advantage: Future-Proofing Malaysia",
+      "description": "Don't just adapt to AI—master it. Join Coursera to unlock how Malaysian companies are leveraging global certifications to build agile, AI-first teams. 30 minutes to discover the exact learning blueprint your organization needs to thrive in 2026 and beyond.",
+      "location": "Champion's Court, Ground Floor",
+      "speakers": [
+        {
+          "name": "Coursera",
+          "org": "",
+          "avatar": null
+        }
+      ]
+    },
+    {
+      "id": "day-1-save-the-build",
+      "day": "day-1",
+      "start": "12:00",
+      "end": "13:00",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": "DEBUG",
+      "title": "Save the Build",
+      "description": "A live rescue session where builders inherit a broken AI workflow and must turn it into something usable under pressure. As failures surface—bad prompts, brittle logic, broken chaining, weak UX, or unreliable outputs—the session reveals who can identify the real issue, make the smartest fix, and recover the build without overcomplicating it.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": [
+        {
+          "name": "Brendan Beh",
+          "org": "AISEA",
+          "avatar": "https://cdn.aimto.my/images/speakers/09.Brendan-Beh.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-designing-smart-with-canva-ai",
+      "day": "day-1",
+      "start": "12:00",
+      "end": "13:00",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": "WORKSHOP",
+      "title": "Designing Smart with Canva AI",
+      "description": "Discover how Canva AI can help you move from idea to polished design with greater speed and confidence. Explore intelligent tools that support brainstorming, content creation, image generation, layout design, and visual storytelling—helping individuals and teams produce professional presentations, campaigns, reports, and social content more efficiently. This session will show you how to combine creativity with AI to design smarter and communicate with impact.",
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": [
+        {
+          "name": "Hilda Paviter Kaur",
+          "org": "Canva",
+          "avatar": "https://cdn.aimto.my/images/speakers/33-Hilda-Paver-Kaur.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-the-builders-economy-what-it-takes-to-win-in-ai",
+      "day": "day-1",
+      "start": "12:30",
+      "end": "13:00",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "SUPERFIRESIDE",
+      "title": "The Builders' Economy: What it Takes to Win in AI",
+      "description": "Malaysia is attracting billions into data centres, infrastructure and AI. But infrastructure alone does not build an AI economy. Builders do. In just six years, Supabase has grown into a US$10 billion startup powering over 10 million developers worldwide. Today, it is the developer platform behind the AI generation, used by builders creating products with Claude Code, OpenAI Codex, Lovable, Bolt, Replit, Figma and thousands of AI startups. In this panel they'll discuss what it takes to build an AI nation.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Paul Copplestone",
+          "org": "CEO, Supabase",
+          "avatar": "https://cdn.aimto.my/images/speakers/27.-Paul-Copplestone.jpg"
+        },
+        {
+          "name": "Joel Neoh",
+          "org": "Founding Partner, Firstmove",
+          "avatar": "https://cdn.aimto.my/images/speakers/16.Joel-Noeh.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-can-ai-speak-manglish-watch-us-build-a-voice-ai",
+      "day": "day-1",
+      "start": "12:30",
+      "end": "13:00",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": "SHOWCASE",
+      "title": "Can AI speak Manglish: watch us build a Voice AI Agent live",
+      "description": "Call our AI agent from your seat and try to break it - switch to BM mid-sentence, hear it come back with the lahs and local accent. Then see what's underneath, as we build a new agent live on stage. The tech is built by Malaysians in San Francisco, running today in major telcos and banks across SEA. We share how frontier tech gets localised.",
+      "location": "Champion's Court, Ground Floor",
+      "speakers": [
+        {
+          "name": "Kai Song E.",
+          "org": "Seavoice AI",
+          "avatar": "https://cdn.aimto.my/images/speakers/11.Kai-Song-E.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-lunch",
+      "day": "day-1",
+      "start": "13:00",
+      "end": "14:00",
+      "stageId": null,
+      "allStages": true,
+      "format": null,
+      "title": "LUNCH",
+      "description": null,
+      "location": null,
+      "speakers": []
+    },
+    {
+      "id": "day-1-malaysia-s-ai-economy-from-capabilities-to-compe",
+      "day": "day-1",
+      "start": "14:00",
+      "end": "14:30",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "FIRESIDE",
+      "title": "Malaysia's AI Economy: From Capabilities to Competitiveness",
+      "description": "A strategic conversation on what it takes to turn AI capability into real economic value. From infrastructure, talent, and data to platforms and partnerships, the session explores how Malaysia can combine local strengths with global technologies to drive productivity, resilience, innovation, and long-term competitiveness.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Nabila Hussain",
+          "org": "Microsoft",
+          "avatar": "https://cdn.aimto.my/images/speakers/21.Nabila-Hussain.jpg"
+        },
+        {
+          "name": "Foong Chee Mun",
+          "org": "YTL AI Labs, Chief Executive Officer",
+          "avatar": "https://cdn.aimto.my/images/speakers/Foong-Chee-Mun.jpg"
+        },
+        {
+          "name": "Calvin Woo",
+          "org": "C4IR",
+          "avatar": "https://cdn.aimto.my/images/speakers/20.Calvin-Woo.jpg"
+        },
+        {
+          "name": "Bjarte Olsen",
+          "org": "Global AI Village",
+          "avatar": "https://cdn.aimto.my/images/speakers/23.Bjarte-Olsen.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-aimto-26-official-opening-ceremony-by-invite-onl",
+      "day": "day-1",
+      "start": "14:30",
+      "end": "15:30",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "LAUNCH",
+      "title": "AIMTO_26 Official Opening Ceremony (BY-INVITE ONLY)",
+      "description": "The formal opening of AIMTO_26, introducing the event's national ambition and public-facing purpose. This session sets the tone for the two-day programme by positioning AI as a capability Malaysia must build across government, business, startups, SMEs, and society.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "YB Gobind Singh Deo",
+          "org": "Minister Of Digital Malaysia",
+          "avatar": "https://cdn.aimto.my/images/speakers/01-Gobind-Singh.jpg"
+        },
+        {
+          "name": "Rizal Shah Amat",
+          "org": "Ludic Asia",
+          "avatar": "https://cdn.aimto.my/images/speakers/Rizal-Shah-Amat.jpg"
+        },
+        {
+          "name": "Khailee Ng",
+          "org": "500 Global",
+          "avatar": "https://cdn.aimto.my/images/speakers/02-Khailee-Ng.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-1-pre-soiree-event-highlight-for-aimto-26",
+      "day": "day-1",
+      "start": "15:00",
+      "end": "15:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Pre-Soiree Event Highlight for AIMTO_26",
+      "description": "A fast-paced sequence of short highlight video to spotlight interesting builds, fresh ideas, and conversation starters before the evening networking session.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-1-networking-soireex",
+      "day": "day-1",
+      "start": "15:30",
+      "end": "18:00",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Networking SoireeX",
+      "description": "An evening networking programme designed for builders, founders, speakers, exhibitors, and partners to continue the day's conversations in a less formal setting. It creates space for deal-making, recruitment, collaboration, and community building.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-networking-registration",
+      "day": "day-2",
+      "start": "09:00",
+      "end": "10:30",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": null,
+      "title": "NETWORKING & REGISTRATION",
+      "description": null,
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-booth-preparation",
+      "day": "day-2",
+      "start": "09:00",
+      "end": "10:30",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": null,
+      "title": "BOOTH PREPARATION",
+      "description": null,
+      "location": "Champion's Court, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-registration-networking",
+      "day": "day-2",
+      "start": "09:00",
+      "end": "10:30",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": null,
+      "title": "REGISTRATION & NETWORKING",
+      "description": null,
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-networking-registration-2",
+      "day": "day-2",
+      "start": "09:30",
+      "end": "10:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "NETWORKING & REGISTRATION",
+      "description": null,
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-build-a-company-not-a-demo",
+      "day": "day-2",
+      "start": "10:30",
+      "end": "11:00",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "PANEL",
+      "title": "Build a Company, Not a Demo",
+      "description": "A practical opening session on the difference between an impressive AI demo and a durable AI business. It explores what founders must build beyond product output: customer value, repeat usage, reliability, and commercial structure.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Tim Tiah",
+          "org": "Entrepreneur",
+          "avatar": "https://cdn.aimto.my/images/speakers/03-Tim-Tiah.jpg"
+        },
+        {
+          "name": "Aaron Sarma",
+          "org": "Gentari, Digital Ecosystem",
+          "avatar": null
+        }
+      ]
+    },
+    {
+      "id": "day-2-learn-a-thon-kickoff-welcome-to-your-first-build",
+      "day": "day-2",
+      "start": "10:30",
+      "end": "11:00",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Learn-a-Thon Kickoff: Welcome to your first build",
+      "description": "A kickoff briefing for the day's build programme, outlining themes, goals, tools, and how participants should approach the learning sprint.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": [
+        {
+          "name": "Lizzie Tan",
+          "org": "CMO & Co-founder, Cleve (Malaysian AI)",
+          "avatar": "https://cdn.aimto.my/images/speakers/Lizzie-Tan.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-from-poolside-chaos-to-platform-how-ai-can-moder",
+      "day": "day-2",
+      "start": "10:30",
+      "end": "11:00",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": "SHOWCASE",
+      "title": "From Poolside Chaos to Platform: How AI Can Modernise Service Businesses",
+      "description": "A showcase of how AI and digital tools can turn messy, manual service operations into smoother, more scalable systems. From booking and scheduling to payments, instructor coordination, and on-site admin, this session highlights how real-world businesses can reduce friction, save time, and operate with far greater clarity and control.",
+      "location": "Champion's Court, Ground Floor",
+      "speakers": [
+        {
+          "name": "Samantha Tang",
+          "org": "Cradle Fund",
+          "avatar": "https://cdn.aimto.my/images/speakers/32-Samantha-Tang.jpg"
+        },
+        {
+          "name": "Rahat Hussain",
+          "org": "CTO, Try Swimming Global",
+          "avatar": "https://cdn.aimto.my/images/speakers/40-Rahat-Hussain.jpg"
+        },
+        {
+          "name": "Amaruddin Othman",
+          "org": "CEO, Try Swimming Global",
+          "avatar": "https://cdn.aimto.my/images/speakers/Amaruddin-Othman.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-anyone-can-build-now-almost-nobody-knows-what-to",
+      "day": "day-2",
+      "start": "10:30",
+      "end": "11:30",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": null,
+      "title": "Anyone Can Build Now. Almost Nobody Knows What to Build",
+      "description": "AI made building almost free. It did not make being wrong free. In this hands-on hour, Andre Teow will run a live user interview, then turns that conversation into a working prototype in front of you. You'll leave with the six questions that separate a real problem from a polite one, and the prompts to run the whole loop yourself. Bring a laptop and a half-formed idea.",
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": [
+        {
+          "name": "Andre Teow",
+          "org": "Build with AI",
+          "avatar": "https://cdn.aimto.my/images/speakers/Andre-Teow.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-learn-a-thon-kickoff-what-you-ll-build-today-mor",
+      "day": "day-2",
+      "start": "10:30",
+      "end": "14:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Learn-a-Thon Kickoff: What You'll Build Today (Morning Session)",
+      "description": "A kickoff briefing for the day's build programme, outlining themes, goals, tools, and how participants should approach the learning sprint.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-builder-basics-from-prompt-to-prototype",
+      "day": "day-2",
+      "start": "11:00",
+      "end": "11:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Builder Basics: From Prompt to Prototype",
+      "description": "A foundational builder session showing how a rough idea becomes a functional early prototype through simple experimentation and iteration.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": [
+        {
+          "name": "Adri Idzwan",
+          "org": "Kracked Devs",
+          "avatar": null
+        }
+      ]
+    },
+    {
+      "id": "day-2-your-ai-twin-is-coming",
+      "day": "day-2",
+      "start": "11:00",
+      "end": "11:30",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": "SHOWCASE",
+      "title": "Your AI Twin Is Coming",
+      "description": "A bold look at the next wave of consumer AI — not chatbots you visit, but personal agents that know how you think, speak, and move through the world. This session explores how AI twins, assistants, and companions could reshape communication, coordination, and connection by acting on your behalf and reducing the friction of everyday life",
+      "location": "Champion's Court, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-building-ai-for-how-malaysians-actually-learn",
+      "day": "day-2",
+      "start": "11:00",
+      "end": "12:00",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "PODCAST",
+      "title": "Building AI for How Malaysians Actually Learn",
+      "description": "A live conversation on designing AI learning experiences around real Malaysian behaviour, including mixed-language use, confidence gaps, conversational learning, and the everyday habits that turn occasional use into long-term learning.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Shahril Hamdan",
+          "org": "Keris & Silicon, Podcast",
+          "avatar": "https://cdn.aimto.my/images/speakers/04-Shahril-Hamdan.jpg"
+        },
+        {
+          "name": "Khairy Jamaluddin",
+          "org": "Co-Founder, Keluar Sekejap",
+          "avatar": "https://cdn.aimto.my/images/speakers/12.-Khairy-Jamaluddin.jpg"
+        },
+        {
+          "name": "Isaac Tan",
+          "org": "Kelas Sekejap",
+          "avatar": "https://cdn.aimto.my/images/speakers/13.Isaac.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-using-ai-apis-without-feeling-intimidated",
+      "day": "day-2",
+      "start": "11:30",
+      "end": "12:00",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Using AI APIs Without Feeling Intimidated",
+      "description": "A demystifying session for participants who want to work with APIs but feel blocked by technical complexity or fear of getting started.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-empowering-the-ai-ready-workforce",
+      "day": "day-2",
+      "start": "11:30",
+      "end": "12:00",
+      "stageId": "pasar-ai",
+      "allStages": false,
+      "format": "SHOWCASE",
+      "title": "Empowering the AI-Ready Workforce",
+      "description": "As AI reshapes business, staying competitive requires an agile team. Join Peoplelogy for a 30-minute session exploring how their integrated ecosystem upskills talent and equips your organization to thrive in an AI-driven future.",
+      "location": "Champion's Court, Ground Floor",
+      "speakers": [
+        {
+          "name": "Cally Yau",
+          "org": "PEOPLElogy",
+          "avatar": null
+        }
+      ]
+    },
+    {
+      "id": "day-2-ai-startups-need-customers-not-just-capital",
+      "day": "day-2",
+      "start": "12:00",
+      "end": "12:30",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "PANEL",
+      "title": "AI Startups Need Customers, Not Just Capital",
+      "description": "A grounded conversation on why funding alone does not create a real AI business. This session explores what actually unlocks growth for Malaysian AI startups: early buyers, repeat use cases, trusted distribution channels, strategic partnerships, and customers willing to pay for real outcomes. Instead of asking only what investors want, the panel looks at what makes demand real enough for a startup to survive, learn, and scale.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Ghazanfar Iqbal",
+          "org": "Amazon Web Services (AWS)",
+          "avatar": null
+        },
+        {
+          "name": "Dato' Munirah Looi",
+          "org": "",
+          "avatar": "https://cdn.aimto.my/images/speakers/15.Dato_-Munirah-Looi.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-in-a-sea-of-ai-slop-how-to-design-things-people",
+      "day": "day-2",
+      "start": "12:00",
+      "end": "12:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "In a Sea of AI Slop: How to Design Things People Remember",
+      "description": "AI democratized execution, not creativity. While anyone can generate an app, a website, or a deck in seconds, most of it is instantly forgettable. In this session we go over what makes something worth remembering and the techniques you can apply in your products. Rachel breaks down her learnings on judgment, taste, and the human instincts AI can't replicate.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": [
+        {
+          "name": "Rachel How",
+          "org": "Mobbin",
+          "avatar": "https://cdn.aimto.my/images/speakers/Rachel-How.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-working-with-corporates-without-getting-stuck",
+      "day": "day-2",
+      "start": "12:00",
+      "end": "13:00",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": "ROUNDTABLE",
+      "title": "Working with Corporates Without Getting Stuck",
+      "description": "A practical discussion on how startups and smaller teams can work with larger organisations without losing speed, clarity, or product direction. The session explores approval layers, expectation management, and how to avoid endless exploratory conversations.",
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-don-t-get-left-behind-practical-ai-for-business",
+      "day": "day-2",
+      "start": "12:00",
+      "end": "13:00",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": "WORKSHOP",
+      "title": "Don't Get Left Behind: Practical AI for Business",
+      "description": "A hands-on session for business owners, managers, and teams who know AI is changing the way work gets done, but do not want to waste time chasing the wrong tools. The workshop focuses on the most useful ways to apply AI across everyday business tasks, helping participants spot quick wins, remove repetitive work, and understand where real advantage is starting to emerge. Clear, practical, and built for immediate use.",
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": [
+        {
+          "name": "Warren Leow",
+          "org": "AITraining2u.com",
+          "avatar": "https://cdn.aimto.my/images/speakers/35-Warren-Leow.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-what-makes-an-ai-startup-fundable-now",
+      "day": "day-2",
+      "start": "12:30",
+      "end": "13:00",
+      "stageId": "war-room",
+      "allStages": false,
+      "format": "PANEL",
+      "title": "What Makes an AI Startup Fundable Now",
+      "description": "A candid investor view on how AI startups are judged now that hype alone is no longer enough. The session focuses on traction quality, retention, product clarity, defensibility, margins, and team credibility.",
+      "location": "Robert's Theatre, Ground Floor",
+      "speakers": [
+        {
+          "name": "Zubin Rada Krishnan",
+          "org": "Partner, Hive Global AI",
+          "avatar": "https://cdn.aimto.my/images/speakers/29-Zubin-Rada-Krishnan.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-show-and-tell-session-1",
+      "day": "day-2",
+      "start": "12:30",
+      "end": "13:00",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Show and Tell Session 1",
+      "description": null,
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-lunch",
+      "day": "day-2",
+      "start": "13:00",
+      "end": "14:00",
+      "stageId": null,
+      "allStages": true,
+      "format": null,
+      "title": "LUNCH",
+      "description": null,
+      "location": null,
+      "speakers": []
+    },
+    {
+      "id": "day-2-security-for-vibe-coders-101",
+      "day": "day-2",
+      "start": "14:00",
+      "end": "14:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Security for Vibe coders 101",
+      "description": "An introduction to security fundamentals for AI-assisted and \"vibe-coded\" applications. Participants will learn about common risks of relying on AI-generated code, key security vulnerabilities, and practical precautions to build and deploy more securely.",
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": [
+        {
+          "name": "Abdul Hafeez",
+          "org": "Kracked Devs",
+          "avatar": "https://cdn.aimto.my/images/speakers/37-ABDUL-HAFEEZ-SADON.jpg"
+        }
+      ]
+    },
+    {
+      "id": "day-2-malaysia-book-of-records",
+      "day": "day-2",
+      "start": "14:30",
+      "end": "15:00",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Malaysia Book of Records",
+      "description": null,
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-show-and-tell-session-2",
+      "day": "day-2",
+      "start": "15:00",
+      "end": "15:30",
+      "stageId": "sandbox",
+      "allStages": false,
+      "format": null,
+      "title": "Show and Tell Session 2",
+      "description": null,
+      "location": "Assembly Hall, Ground Floor",
+      "speakers": []
+    },
+    {
+      "id": "day-2-selling-ai-to-smes-without-overcomplicating-it",
+      "day": "day-2",
+      "start": "15:00",
+      "end": "16:00",
+      "stageId": "masterclass",
+      "allStages": false,
+      "format": "MASTERCLASS",
+      "title": "Selling AI to SMEs Without Overcomplicating It",
+      "description": "A commercially focused session on how to explain, package, and sell AI to SMEs in a way that matches their priorities and decision logic. It focuses on simplicity, relevance, and practical business value rather than technical sophistication.",
+      "location": "Padang Teduh, Lower Ground Floor",
+      "speakers": [
+        {
+          "name": "Warren Leow",
+          "org": "AITraining2u.com",
+          "avatar": "https://cdn.aimto.my/images/speakers/35-Warren-Leow.jpg"
+        }
+      ]
+    }
+  ]
+}
