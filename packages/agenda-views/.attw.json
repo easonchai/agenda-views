@@ -1,0 +1,9 @@
+{
+  "$schema": "https://cdn.jsdelivr.net/npm/@arethetypeswrong/cli/config-schema.json",
+  "ignoreRules": [
+    "cjs-resolves-to-esm"
+  ],
+  "excludeEntrypoints": [
+    "./styles.css"
+  ]
+}

@@ -1,0 +1,41 @@
+@import "tailwindcss";
+/*
+  Tailwind v4 only generates utilities it can see. The package's classes live
+  in its compiled output, which sits outside this app's source tree, so it has
+  to be registered explicitly — relative to THIS file, not the project root.
+*/
+@source "../../node_modules/agenda-views/dist";
+@import "agenda-views/styles.css";
+
+/* opt the package's type stack into the app's webfont */
+:root {
+  --agenda-font-sans: var(--font-inter);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    /* stop iOS rubber-band from detaching sticky headers */
+    overscroll-behavior-y: none;
+  }
+
+  /* visible, consistent focus ring everywhere — never remove it */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--color-brand) 25%, transparent);
+  }
+}

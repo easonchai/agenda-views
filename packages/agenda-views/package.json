@@ -1,0 +1,101 @@
+{
+  "name": "agenda-views",
+  "version": "0.1.0",
+  "description": "Multi-track conference agenda for React \u2014 a desktop time grid and a mobile-first chronological list over one data model.",
+  "keywords": [
+    "react",
+    "agenda",
+    "schedule",
+    "calendar",
+    "timetable",
+    "conference",
+    "event",
+    "timeline",
+    "tailwind",
+    "shadcn"
+  ],
+  "license": "MIT",
+  "author": "easonchai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/easonchai/agenda-views.git",
+    "directory": "packages/agenda-views"
+  },
+  "homepage": "https://aimto-agenda.vercel.app",
+  "bugs": "https://github.com/easonchai/agenda-views/issues",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "styles.css",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./headless": {
+      "types": "./dist/headless.d.ts",
+      "default": "./dist/headless.js"
+    },
+    "./next": {
+      "types": "./dist/next.d.ts",
+      "default": "./dist/next.js"
+    },
+    "./styles.css": "./styles.css",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "headless": [
+        "./dist/headless.d.ts"
+      ],
+      "next": [
+        "./dist/next.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/build-registry.mjs",
+    "clean": "rm -rf dist",
+    "prepack": "pnpm run clean && pnpm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint:publish": "publint --strict && attw --pack .",
+    "validate": "pnpm run typecheck && pnpm run test && pnpm run build && pnpm run lint:publish",
+    "build:registry": "node scripts/build-registry.mjs"
+  },
+  "peerDependencies": {
+    "next": ">=14",
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "next": "16.3.0",
+    "publint": "^0.3.14",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "typescript": "^5",
+    "vitest": "^3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.18"
+  }
+}

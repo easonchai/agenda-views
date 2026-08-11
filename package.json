@@ -1,27 +1,14 @@
 {
-  "name": "agenda-views",
-  "version": "0.1.0",
+  "name": "agenda-views-monorepo",
   "private": true,
+  "packageManager": "pnpm@10.6.5",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.3.0",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  },
-  "packageManager": "pnpm@10.6.5"
+    "build": "pnpm --filter agenda-views build && pnpm --filter demo build",
+    "build:lib": "pnpm --filter agenda-views build",
+    "dev": "pnpm --filter demo dev",
+    "test": "pnpm --filter agenda-views test",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "validate": "pnpm --filter agenda-views validate"
+  }
 }
